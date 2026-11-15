@@ -1,0 +1,823 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>QDGZ — Le galion d'ULTRON</title>
+<meta name="theme-color" content="#0b0d18"><meta name="description" content="Le QG 3D des agents IA de Sacha : un galion volant piloté par ULTRON.">
+<link rel="manifest" href='data:application/manifest+json,{"name":"QDGZ","short_name":"QDGZ","start_url":".","display":"standalone","orientation":"landscape","background_color":"%230b0d18","theme_color":"%230b0d18"}'>
+<style>
+:root{--or:#e8b04a;--ink:#f6ead2}
+html,body{margin:0;height:100%;overflow:hidden;background:#0b1430;color:var(--ink);font-family:system-ui,sans-serif}
+#scene{position:fixed;inset:0}
+#top{position:fixed;top:0;left:0;right:0;display:flex;align-items:center;flex-wrap:wrap;gap:8px;padding:10px 14px;background:linear-gradient(#0b0d18d0,#0b0d1800);pointer-events:none;z-index:5}
+#top>*{pointer-events:auto}
+#logo{width:84px;height:52px;float:left;margin-right:10px;border-radius:4px;box-shadow:0 0 0 1px #c9973a,0 4px 14px #000a}
+#brand{font:700 30px Georgia,serif;letter-spacing:.22em;color:var(--or);text-shadow:0 2px 0 #000,0 0 16px #e8b04a99;line-height:1}
+#sub{font:12px Georgia,serif;letter-spacing:.14em;opacity:.85}
+.sp{flex:1}
+.pill{font-size:12px;padding:4px 10px;border-radius:20px;border:1px solid #ffffff44;background:#0009}
+.btn{font:600 12px system-ui;padding:7px 11px;border-radius:8px;border:1px solid #e8b04aaa;background:#1a1008e6;color:var(--ink);cursor:pointer}
+.btn:hover{background:#3a2410}
+.tag{font:600 11px system-ui;padding:4px 10px;border-radius:12px;background:#0d0906e8;border:1px solid var(--c,#e8b04a);color:#f6ead2;white-space:nowrap;cursor:pointer;text-align:center;line-height:1.35;box-shadow:0 4px 14px #0007}
+.tag b{color:var(--c,#e8b04a)}
+.tag i{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px;background:var(--s,#888);box-shadow:0 0 6px var(--s,#888)}
+.tag small{display:block;font-weight:400;opacity:.8}
+#panel{position:fixed;right:12px;top:72px;width:350px;max-width:calc(100% - 24px);max-height:calc(100% - 88px);overflow:auto;padding:14px 16px;border-radius:12px;background:#120b06f2;border:1px solid #e8b04a88;display:none;font-size:14px;z-index:6;box-shadow:0 10px 40px #000b}
+#panel h2{margin:0 0 2px;font:700 20px Georgia,serif;color:var(--or)}
+#panel .k{opacity:.7;font-size:12px;margin-top:9px}
+#panel textarea{width:100%;box-sizing:border-box;min-height:84px;margin:8px 0;background:#0009;color:#fff;border:1px solid #ffffff33;border-radius:8px;padding:8px;font:13px system-ui}
+#panel .row{display:flex;gap:6px;flex-wrap:wrap}
+#panel a.btn{text-decoration:none;display:inline-block}
+#pRep{margin:4px 0 8px;padding:6px 9px;border-left:3px solid var(--or);background:#0007;font-style:italic;display:none}
+#x{float:right;background:none;border:0;color:var(--ink);font-size:18px;cursor:pointer}
+#views{position:fixed;left:50%;bottom:10px;transform:translateX(-50%);display:flex;gap:5px;max-width:calc(100% - 20px);overflow-x:auto;padding:6px;border-radius:14px;background:#0d0906cc;border:1px solid #e8b04a55;z-index:5;scrollbar-width:none}
+#views button{flex:none;font:600 12px system-ui;padding:7px 10px;border-radius:10px;border:1px solid #e8b04a66;background:#1a1008;color:#f6ead2;cursor:pointer;white-space:nowrap}
+#views button.on{background:#e8b04a;color:#140b04;border-color:#e8b04a}
+#load{position:fixed;inset:0;background:radial-gradient(ellipse at 50% 40%,#2a1a3a,#0b0d18 70%);z-index:50;display:flex;align-items:center;justify-content:center;transition:opacity .8s}
+#load.off{opacity:0;pointer-events:none}#loadBox{text-align:center}#loadLogo{width:160px;height:100px;margin:0 auto 14px;border-radius:6px;box-shadow:0 0 0 1px #c9973a,0 10px 40px #000;background:#000 center/cover}
+#loadT{font:700 44px Georgia,serif;letter-spacing:.3em;color:var(--or);text-shadow:0 0 24px #e8b04a88}#loadS{font:13px Georgia,serif;letter-spacing:.1em;opacity:.8;margin:6px 0 16px}
+#loadBar{width:220px;height:4px;margin:0 auto;background:#ffffff22;border-radius:3px;overflow:hidden}#loadBar i{display:block;height:100%;width:30%;background:var(--or);animation:ld 1.2s infinite ease-in-out}@keyframes ld{0%{transform:translateX(-100%)}100%{transform:translateX(340%)}}
+#cfg{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);width:380px;max-width:calc(100% - 24px);padding:14px 16px;border-radius:12px;background:#120b06f6;border:1px solid #e8b04a88;display:none;z-index:8;font-size:14px;box-shadow:0 10px 40px #000b}
+#cfg h2{margin:0 0 4px;font:700 20px Georgia,serif;color:var(--or)}#cfg input[type=text],#cfg input:not([type]){width:100%;box-sizing:border-box;background:#0009;color:#fff;border:1px solid #ffffff33;border-radius:8px;padding:7px;font:13px system-ui;margin-top:3px}
+#cfg .k{opacity:.75;font-size:12px;margin-top:9px;display:block}#cx{float:right;background:none;border:0;color:var(--ink);font-size:18px;cursor:pointer}
+#pMis{margin:6px 0 2px}#pMis .m{display:flex;align-items:center;gap:6px;padding:5px 7px;margin-top:4px;border-radius:7px;background:#0007;border-left:3px solid var(--s,#888);font-size:12px}#pMis .m span{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#pMis .m button,#pMis .m a{font:12px system-ui;padding:3px 7px;border-radius:6px;border:1px solid #e8b04a66;background:#1a1008;color:var(--ink);cursor:pointer;text-decoration:none}
+#flare{position:fixed;inset:0;pointer-events:none;z-index:3;overflow:hidden}#flare i{position:absolute;border-radius:50%;transform:translate(-50%,-50%);mix-blend-mode:screen}
+#log{position:fixed;left:12px;bottom:66px;font-size:12px;max-width:60%;pointer-events:none;z-index:5}
+#log div{background:#000b;padding:3px 8px;border-radius:6px;margin-top:4px;border-left:3px solid var(--or)}
+@media(max-height:520px){#brand{font-size:21px}#panel{top:54px;max-height:calc(100% - 64px)}#log{display:none}}
+#labels{position:fixed;inset:0;pointer-events:none;z-index:4;overflow:hidden}
+#labels>div{position:absolute;left:0;top:0;pointer-events:auto;will-change:transform;-webkit-font-smoothing:antialiased}
+.plate{font:700 10px Georgia,serif;letter-spacing:.06em;padding:3px 10px 4px;border-radius:3px;background:linear-gradient(#2c1b0c,#130a04);border:1px solid #d4a440;border-bottom:3px solid var(--c);color:#f3d58a;cursor:pointer;white-space:nowrap;text-align:center;box-shadow:0 3px 10px #000a;text-shadow:0 1px 0 #000;line-height:1.3}
+.plate i{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:5px;vertical-align:1px;background:var(--s,#888);box-shadow:0 0 6px var(--s,#888)}
+.plate small{display:block;font:500 10px system-ui;letter-spacing:.02em;color:#f6ead2;opacity:.85}
+.plate.lvl{background:#0d0906d0;border-bottom-width:1px;font-size:10px;cursor:default;color:#d4a440}
+.plate:hover,.tag:hover{filter:brightness(1.3)}
+</style>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
+</head>
+<body>
+<div id="scene"></div><div id="flare"></div>
+<div id="labels"></div>
+<div id="top">
+ <div><div id="brand">QDGZ</div><div id="sub">LE GALION VOLANT DU CAPITAINE ULTRON</div></div>
+ <span class="sp"></span>
+ <span id="cnt" class="pill" title="missions">📜 …</span><span id="n8n" class="pill">N8N : connexion…</span><span id="oll" class="pill">Ollama : connexion…</span><button class="btn" id="bCfg" title="Réglages">⚙</button>
+ <button class="btn" id="bCap">🏴‍☠️ Capitaine</button><button class="btn" id="bNext">➜ Salle suivante</button>
+</div>
+<div id="views"></div>
+<div id="panel"><button id="x">✕</button><h2 id="pT"></h2><div id="pS"></div>
+ <div class="k" id="pRk">Rôle à bord</div><div id="pR"></div>
+ <div id="pAg"><div class="k">Statut</div><div id="pSt"></div><div id="pMis"></div><div class="row" id="pRunRow" style="margin:6px 0"><button class="btn" id="pRun">⚡ Lancer ULTRON maintenant</button></div>
+ <textarea id="pI" placeholder="Ordre pour ce pirate (il arrive dans ton coffre Obsidian, N8N le confie à l'agent)"></textarea>
+ <div class="row" id="pTalkRow" style="margin-bottom:6px"><button class="btn" id="pTalk">🧠 Demander à ULTRON (Ollama → N8N)</button></div>
+ <div id="pRep"></div>
+ <div class="row"><button class="btn" id="pGo">📜 Envoyer la mission</button><a class="btn" id="pCl" target="_blank" rel="noopener">🖥 Ouvrir dans Claude</a></div></div>
+ <div class="row" style="margin-top:8px"><a class="btn" id="pN8" target="_blank" rel="noopener">⚙ Salle des machines (N8N)</a><a class="btn" href="obsidian://open?vault=ULTRON-Vault">📓 Archives (Obsidian)</a></div>
+</div>
+<div id="log"></div>
+<div id="load"><div id="loadBox"><div id="loadLogo"></div><div id="loadT">QDGZ</div><div id="loadS">Le galion prend la mer des nuages…</div><div id="loadBar"><i></i></div></div></div>
+<div id="cfg"><button id="cx">✕</button><h2>⚙ Réglages</h2>
+ <div class="k">Adresse de N8N (salle des machines)</div><input id="cN8" placeholder="http://localhost:5678">
+ <div class="k">Adresse d'Ollama (cerveau d'ULTRON)</div><input id="cOl" placeholder="http://localhost:11434">
+ <div class="k">Sur ce PC : laisse vide. Depuis ton téléphone ou en ligne : lance <b>URL-PUBLIQUE.bat</b> sur ton PC et colle les deux adresses.</div>
+ <label class="k"><input type="checkbox" id="cVx"> 🔊 ULTRON annonce à voix haute les missions terminées</label>
+ <label class="k"><input type="checkbox" id="cLo"> 🪶 Mode léger (petit PC ou téléphone)</label>
+ <div class="row" style="margin-top:10px"><button class="btn" id="cOk">Enregistrer</button><button class="btn" id="cTest">Tester la connexion</button></div><div id="cRes" class="k"></div>
+</div>
+<script type="module">
+import * as THREE from 'three';
+import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
+import {EffectComposer} from 'three/addons/postprocessing/EffectComposer.js';
+import {RenderPass} from 'three/addons/postprocessing/RenderPass.js';
+import {UnrealBloomPass} from 'three/addons/postprocessing/UnrealBloomPass.js';
+import {OutputPass} from 'three/addons/postprocessing/OutputPass.js';
+import {RoomEnvironment} from 'three/addons/environments/RoomEnvironment.js';
+import {RoundedBoxGeometry} from 'three/addons/geometries/RoundedBoxGeometry.js';
+import {ShaderPass} from 'three/addons/postprocessing/ShaderPass.js';
+/* =====================================================================
+   1. TON QG — à modifier ici (comme la liste PIECES du QG de ton ami)
+   Le galion QDGZ porte tout l'équipage : une salle par agent + des salles utiles.
+   Statuts : "travail", "pause", "attente", "en ligne" (en direct depuis N8N).
+   ===================================================================== */
+const NOM_QG = "QDGZ";
+const HOTE = /^(localhost|127\.|192\.168\.|10\.)/.test(location.hostname) ? location.hostname : "localhost";
+const LS = k => { try { return localStorage.getItem(k) || '' } catch (e) { return '' } }, LSset = (k, v) => { try { localStorage.setItem(k, v) } catch (e) { } };
+const clean = u => u.trim().replace(/\/+$/, '');
+let N8N = clean(LS('qdgz.n8n')) || `http://${HOTE}:5678`, OLL = clean(LS('qdgz.ollama')) || `http://${HOTE}:11434`, VOIX = LS('qdgz.voix') === '1', LEGER = LS('qdgz.leger') === '1';
+const CAPITAINE = { code: "ULTRON", fonction: "Capitaine", piece: "Passerelle", couleur: "#ff2a2a",
+  role: "Capitaine du QDGZ : reçoit les ordres de Sacha, les répartit entre les salles, surveille l'avancement et fait le rapport." };
+// étage 1 = pont des officiers, étage 2 = pont des ateliers, étage 3 = cale
+const AGENTS = [
+  { code: "PROF-01", fonction: "Navigateur",      piece: "Salle des cartes",     etage: 1, couleur: "#4fc3f7", deco: "cartes",   role: "Trace la route des études : cours de L3 MIAGE en fiches et quiz, planning de révision jusqu'aux examens." },
+  { code: "INK-04",  fonction: "Scribe",          piece: "Scriptorium",          etage: 1, couleur: "#69f0ae", deco: "scribe",   role: "Écrit les textes qui font vendre : missions de copywriting, puis portfolio." },
+  { code: "HUNT-05", fonction: "Vigie",           piece: "Poste de vigie",       etage: 1, couleur: "#ffd740", deco: "vigie",    role: "Repère les terres d'accueil : offres d'alternance 2026-2027, CV, lettres, relances." },
+  { code: "GIT-02",  fonction: "Conteur de bord", piece: "Studio des légendes",  etage: 2, couleur: "#ff4081", deco: "studio",   role: "Raconte les histoires du QDGZ : vidéos GITHISTORY (TikTok + YouTube Shorts) avec la procédure GVI." },
+  { code: "REEL-03", fonction: "Héraut",          piece: "Salle du héraut",      etage: 2, couleur: "#ff9100", deco: "montage",  role: "Annonce l'armada au monde : mini-série YouTube Shorts, un épisode à la fois." },
+  { code: "CASH-06", fonction: "Quartier-maître", piece: "Salle du trésor",      etage: 2, couleur: "#1de9b6", deco: "tresor",   role: "Garde et fait fructifier le butin : portefeuille de revenus passifs, suivi mensuel." },
+  { code: "SHOP-07", fonction: "Marchand",        piece: "Comptoir",             etage: 2, couleur: "#b388ff", deco: "comptoir", role: "Vend les trésors du QDGZ : un produit numérique et sa fiche Payhip chaque semaine." },
+];
+const SALLES = [
+  { id: "cabine",    nom: "Cabine du capitaine",  etage: 1, couleur: "#ff2a2a", deco: "cabine",    info: "Les quartiers d'ULTRON : trône, carte de l'armada, coffre personnel." },
+  { id: "conseil",   nom: "Salle du conseil",     etage: 1, couleur: "#e8b04a", deco: "conseil",   info: "La table ronde où ULTRON réunit les seconds. Écris un ordre à ULTRON : il le découpe et le répartit." },
+  { id: "archives",  nom: "Archives · Obsidian",  etage: 2, couleur: "#a78bfa", deco: "archives",  info: "La mémoire de bord : fiches des agents, missions, livrables. C'est ton coffre Obsidian ULTRON-Vault.", lien: "obsidian://open?vault=ULTRON-Vault", lienTxt: "📓 Ouvrir le coffre" },
+  { id: "machines",  nom: "Salle des machines · N8N", etage: 3, couleur: "#ff7a2a", deco: "machines", info: "Le moteur du QDGZ : N8N réveille ULTRON toutes les 10 minutes, écrit le rapport du matin et relie la base au coffre.", lien: "N8N", lienTxt: "⚙ Ouvrir N8N" },
+  { id: "armurerie", nom: "Armurerie",            etage: 3, couleur: "#9aa4ae", deco: "armurerie", info: "Sabres, pistolets et boulets. Ici sont rangées les règles de bord : rien n'est publié, envoyé ou supprimé sans ton accord." },
+  { id: "cambuse",   nom: "Cambuse",              etage: 3, couleur: "#f59e0b", deco: "cambuse",   info: "La cuisine de l'équipage. Les matelots y font la pause entre deux corvées." },
+  { id: "atelier", nom: "Atelier des agents", etage: 1, couleur: "#38bdf8", deco: "atelier", info: "Le chantier du QDGZ : c'est ici qu'on fabrique et qu'on améliore les agents (nouvelles compétences, nouvelles procédures dans CLAUDE.md, nouveaux workflows)." },
+  { id: "infirmerie", nom: "Infirmerie · Débogage", etage: 2, couleur: "#4ade80", deco: "infirmerie", info: "Quand un agent plante ou qu'un workflow N8N échoue, il passe ici : on lit l'erreur, on répare, on relance. Rien n'est supprimé sans ton accord." },
+  { id: "soute",     nom: "Soute aux cargaisons", etage: 3, couleur: "#c08a4a", deco: "soute",     info: "Les livrables prêts à partir : produits Payhip, vidéos, textes en attente de ta validation." },
+];
+const STATUTS = {
+  "travail":  { texte: "au travail",        couleur: "#22c55e" },
+  "pause":    { texte: "au repos",          couleur: "#f59e0b" },
+  "attente":  { texte: "attend ta réponse", couleur: "#ef4444" },
+  "en ligne": { texte: "mission reçue",     couleur: "#8b5cf6" },
+};
+
+/* =====================================================================
+   2. LE CIEL : coucher de soleil au-dessus d'une mer de nuages
+   ===================================================================== */
+const PI = Math.PI, V = THREE.Vector3, rand = (a, b) => a + Math.random() * (b - a), $ = s => document.querySelector(s);
+const MOB = matchMedia('(pointer:coarse)').matches;
+const r = new THREE.WebGLRenderer({ antialias: true }); r.setPixelRatio(Math.min(devicePixelRatio, LEGER ? 1 : MOB ? 1.25 : 1.75)); r.setSize(innerWidth, innerHeight);
+r.toneMapping = THREE.ACESFilmicToneMapping; r.toneMappingExposure = 1.0; r.outputColorSpace = THREE.SRGBColorSpace;
+r.shadowMap.enabled = !MOB && !LEGER; r.shadowMap.type = THREE.PCFSoftShadowMap;
+$('#scene').appendChild(r.domElement);
+const scene = new THREE.Scene();
+const HZ = new THREE.Color('#f2b98a'); scene.fog = new THREE.Fog(HZ, 380, 1500);
+const cam = new THREE.PerspectiveCamera(48, innerWidth / innerHeight, .5, 4000);
+const ctl = new OrbitControls(cam, r.domElement); ctl.enableDamping = true; ctl.minDistance = 1.5; ctl.maxDistance = 420;
+// dôme de ciel en dégradé
+const sky = new THREE.Mesh(new THREE.SphereGeometry(2500, 48, 24), new THREE.ShaderMaterial({ side: THREE.BackSide, depthWrite: false, fog: false,
+  uniforms: { top: { value: new THREE.Color('#13285a') }, mid: { value: new THREE.Color('#4f86c9') }, hz: { value: HZ }, low: { value: new THREE.Color('#8fa6c9') }, sun: { value: new V(.42, .2, .88).normalize() }, gc: { value: new THREE.Color(1, .72, .42) } },
+  vertexShader: 'varying vec3 vP;void main(){vP=normalize(position);gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}',
+  fragmentShader: `uniform vec3 top,mid,hz,low,sun,gc;varying vec3 vP;void main(){float h=vP.y;vec3 c=h>0.?mix(hz,mix(mid,top,smoothstep(.25,.9,h)),smoothstep(0.,.32,h)):mix(hz,low,smoothstep(0.,-.25,h));
+  float s=max(dot(vP,sun),0.);c+=gc*(pow(s,8.)*.55+pow(s,200.)*2.2);gl_FragColor=vec4(c,1.);}` }));
+scene.add(sky);
+const SUN = new V(.42, .2, .88).normalize();
+const sunL = new THREE.DirectionalLight('#ffd6a0', 2.6); sunL.position.copy(SUN).multiplyScalar(300); scene.add(sunL); scene.add(sunL.target);
+Object.assign(sunL.shadow.camera, { left: -170, right: 170, top: 170, bottom: -170, near: 10, far: 900 }); sunL.shadow.mapSize.set(2048, 2048); sunL.shadow.bias = -.0005; sunL.castShadow = !MOB;
+const ENV = new THREE.PMREMGenerator(r).fromScene(new RoomEnvironment(), .04).texture;
+const hemi = new THREE.HemisphereLight('#bcd4ff', '#7a5e4a', 1); scene.add(hemi);
+const fill = new THREE.DirectionalLight('#9fc4ff', 1.6); fill.position.set(-200, 120, -160); scene.add(fill);
+const softT = (() => { const c = document.createElement('canvas'); c.width = c.height = 128; const x = c.getContext('2d'), g = x.createRadialGradient(64, 64, 2, 64, 64, 64); g.addColorStop(0, 'rgba(255,255,255,1)'); g.addColorStop(.4, 'rgba(255,255,255,.55)'); g.addColorStop(1, 'rgba(255,255,255,0)'); x.fillStyle = g; x.fillRect(0, 0, 128, 128); return new THREE.CanvasTexture(c) })();
+// nuages en volume (grappes de sphères) qui défilent : l'armada avance
+const cloudM = new THREE.MeshStandardMaterial({ color: '#fff6ee', roughness: 1, emissive: '#3a3550', emissiveIntensity: .35 });
+const puff = new THREE.IcosahedronGeometry(1, 2), clouds = [];
+function cumulus(x, y, z, s) { const g = new THREE.Group(); g.position.set(x, y, z); const n = 6 + Math.floor(rand(0, 6));
+  for (let i = 0; i < n; i++) { const m = new THREE.Mesh(puff, cloudM); const k = rand(.5, 1); m.scale.set(k * rand(1, 1.6), k * rand(.6, .9), k); m.position.set(rand(-1.6, 1.6), rand(-.1, .5) * k, rand(-1, 1)); g.add(m) }
+  g.scale.setScalar(s); scene.add(g); clouds.push(g); return g }
+for (let i = 0; i < 60; i++) { const back = Math.random() < .6; cumulus(rand(-700, 700), back ? rand(-70, 70) : rand(-90, -25), back ? -rand(140, 650) : rand(260, 650), rand(10, 28)) }
+for (let i = 0; i < 26; i++) cumulus(rand(-700, 700), rand(-80, -50), rand(-90, 90), rand(10, 22));
+// mer de nuages tout en bas
+const floorM = new THREE.MeshStandardMaterial({ color: '#f3e6dc', roughness: 1, emissive: '#5a4a60', emissiveIntensity: .25 });
+const sea = new THREE.Mesh(new THREE.PlaneGeometry(6000, 6000), floorM); sea.rotation.x = -PI / 2; sea.position.y = -95; scene.add(sea);
+for (let i = 0; i < 80; i++) { const g = cumulus(rand(-900, 900), -95, rand(-900, 900), rand(25, 55)); g.userData.floor = 1 }
+// filets de vent (vitesse)
+const windG = new THREE.BufferGeometry(), WN = 260, wp = new Float32Array(WN * 6);
+for (let i = 0; i < WN; i++) { const x = rand(-300, 300), y = rand(-20, 90), z = rand(-200, 200); wp.set([x, y, z, x + rand(6, 14), y, z], i * 6) }
+windG.setAttribute('position', new THREE.BufferAttribute(wp, 3)); const wind = new THREE.LineSegments(windG, new THREE.LineBasicMaterial({ color: '#ffffff', transparent: true, opacity: .28 })); scene.add(wind);
+// oiseaux
+const birds = []; for (let i = 0; i < 14; i++) { const g = new THREE.Group(); [-1, 1].forEach(s => { const w = new THREE.Mesh(new THREE.PlaneGeometry(1.4, .35), new THREE.MeshBasicMaterial({ color: '#2a2230', side: THREE.DoubleSide })); w.position.x = s * .7; g.add(w); g.userData[s] = w });
+  g.position.set(rand(-200, 200), rand(40, 90), rand(-150, 150)); g.userData.ph = rand(0, 6); scene.add(g); birds.push(g) }
+
+/* =====================================================================
+   3. MATÉRIAUX : coques noires laquées, dorures, voiles sombres
+   ===================================================================== */
+const canvasTex = (w, h, f) => { const c = document.createElement('canvas'); c.width = w; c.height = h; f(c.getContext('2d'), w, h); const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; return t };
+const plankT = canvasTex(256, 256, (x) => { x.fillStyle = '#1a1512'; x.fillRect(0, 0, 256, 256); for (let i = 0; i < 16; i++) { x.fillStyle = `rgb(${50 + rand(0, 14)},${41 + rand(0, 10)},${35 + rand(0, 8)})`; x.fillRect(0, i * 16 + 1, 256, 14); x.fillStyle = '#1a1512'; x.fillRect(rand(0, 256), i * 16, 2, 16); for (let k = 0; k < 6; k++) { x.fillStyle = `rgba(0,0,0,${rand(.05, .2)})`; x.fillRect(rand(0, 256), i * 16 + 1 + rand(0, 12), rand(10, 60), 1) } } });
+plankT.wrapS = plankT.wrapT = THREE.RepeatWrapping; plankT.repeat.set(2, 2);
+const deckT = canvasTex(256, 256, (x) => { x.fillStyle = '#6b4a2e'; x.fillRect(0, 0, 256, 256); for (let i = 0; i < 16; i++) { x.fillStyle = `rgb(${95 + rand(0, 25)},${62 + rand(0, 16)},${36 + rand(0, 10)})`; x.fillRect(0, i * 16 + 1, 256, 14); x.fillStyle = '#3a2614'; x.fillRect(rand(0, 256), i * 16, 2, 16) } });
+deckT.wrapS = deckT.wrapT = THREE.RepeatWrapping; deckT.repeat.set(3, 3);
+const blackM = new THREE.MeshPhysicalMaterial({ map: plankT, color: '#cfc4ba', roughness: .5, metalness: .1, clearcoat: 1, clearcoatRoughness: .2 });
+const deckM = new THREE.MeshStandardMaterial({ map: deckT, roughness: .75 });
+const goldM = new THREE.MeshStandardMaterial({ color: '#d4a440', metalness: 1, roughness: .28 });
+const brassM = new THREE.MeshStandardMaterial({ color: '#b07a3a', metalness: .9, roughness: .35 });
+const darkWood = new THREE.MeshStandardMaterial({ color: '#2b1d14', roughness: .7 });
+const ropeM = new THREE.LineBasicMaterial({ color: '#2a2018', transparent: true, opacity: .8 });
+const trimM = new THREE.LineBasicMaterial({ color: '#c9973a' });
+const steel = new THREE.MeshStandardMaterial({ color: '#8c96a3', metalness: .9, roughness: .28 });
+const gunM = new THREE.MeshStandardMaterial({ color: '#1b1d22', metalness: .85, roughness: .35 });
+const glow = (c, i = 2.5) => new THREE.MeshStandardMaterial({ color: '#000', emissive: c, emissiveIntensity: i });
+[goldM, brassM, steel, gunM, blackM].forEach(m => { m.envMap = ENV; m.envMapIntensity = .7 });
+function add(geo, mat, p, x = 0, y = 0, z = 0, trim = false) { const m = new THREE.Mesh(geo, mat); m.position.set(x, y, z); m.castShadow = m.receiveShadow = true; p.add(m); if (trim) m.add(new THREE.LineSegments(new THREE.EdgesGeometry(geo, 25), trimM)); return m }
+const ext = (shape, d) => new THREE.ExtrudeGeometry(shape, { depth: d, bevelEnabled: true, bevelThickness: .04, bevelSize: .04, bevelSegments: 1, curveSegments: 16 });
+
+/* coque de galion : flancs galbés (empilement de bordages), sabords dorés, proue, galerie arrière vitrée */
+function hull(L, B, H, big) {
+  const g = new THREE.Group(), l = L / 2, dk = H * .8, rows = big ? 9 : 6;
+  // bordages : couches horizontales qui s'évasent vers le haut (vrai galbe de coque)
+  for (let k = 0; k < rows; k++) { const t0 = k / rows, y = H * .05 + t0 * dk * .98, w = B / 2 * (.45 + .55 * Math.sin(Math.min(1, t0 * 1.25) * PI / 2)), len = l * (.82 + .18 * t0);
+    const s = new THREE.Shape(); s.moveTo(-len * 1.02, -w * .92); s.lineTo(len * .55, -w); s.quadraticCurveTo(len * 1.0, -w * .55, len * (1.05 + .12 * t0), 0); s.quadraticCurveTo(len * 1.0, w * .55, len * .55, w); s.lineTo(-len * 1.02, w * .92); s.quadraticCurveTo(-len * 1.1, 0, -len * 1.02, -w * .92);
+    const m = add(ext(s, dk / rows * .98), blackM, g, 0, y + dk / rows, 0, k === rows - 1 || k === 3); m.rotation.x = PI / 2 }
+  // pont
+  const dw = B / 2, ds = new THREE.Shape(); ds.moveTo(-l * 1.02, -dw * .92); ds.lineTo(l * .55, -dw); ds.quadraticCurveTo(l, -dw * .55, l * 1.17, 0); ds.quadraticCurveTo(l, dw * .55, l * .55, dw); ds.lineTo(-l * 1.02, dw * .92); ds.lineTo(-l * 1.02, -dw * .92);
+  const deck = add(new THREE.ShapeGeometry(ds), deckM, g, 0, dk + .06, 0); deck.rotation.x = -PI / 2;
+  // bandeau doré + sabords
+  [-1, 1].forEach(s => { add(new THREE.BoxGeometry(L * .95, .12, .1), goldM, g, -l * .1, dk * .62, s * (B / 2 * .97));
+    const n = big ? 9 : 4; for (let i = 0; i < n; i++) { const x = -l * .75 + i * (l * 1.35) / (n - 1); add(new THREE.BoxGeometry(.6 * (big ? 1 : .8), .5 * (big ? 1 : .8), .08), goldM, g, x, dk * .45, s * B / 2 * .99); add(new THREE.BoxGeometry(.42 * (big ? 1 : .8), .34 * (big ? 1 : .8), .1), glow('#ffb347', 1.4), g, x, dk * .45, s * B / 2) } });
+  // bastingage
+  const rail = (x1, x2, z, y) => { const n = Math.max(2, Math.round((x2 - x1) / 1.3)); for (let i = 0; i <= n; i++) add(new THREE.CylinderGeometry(.05, .05, .7, 6), goldM, g, x1 + i * (x2 - x1) / n, y + .35, z); add(new THREE.BoxGeometry(x2 - x1, .1, .16), blackM, g, (x1 + x2) / 2, y + .72, z, true) };
+  [-1, 1].forEach(s => rail(-l * .55, l * .6, s * (B / 2 - .1), dk));
+  // galerie arrière (château) + fenêtres éclairées
+  const st = add(new THREE.BoxGeometry(l * .5, H * .55, B * .96), blackM, g, -l * .78, dk + H * .275, 0, true);
+  for (let i = 0; i < (big ? 5 : 3); i++) { const z = -B * .36 + i * (B * .72) / ((big ? 5 : 3) - 1); add(new THREE.BoxGeometry(.08, H * .2, B * .1), glow('#ffcc70', 2.2), g, -l * 1.03, dk + H * .3, z); add(new THREE.BoxGeometry(.12, H * .26, B * .14), goldM, g, -l * 1.025, dk + H * .3, z) }
+  add(new THREE.BoxGeometry(.3, .14, B * 1.02), goldM, g, -l * 1.02, dk + H * .58, 0);
+  // gouvernail + figure de proue dorée
+  add(new THREE.BoxGeometry(.2, H * .9, l * .12), blackM, g, -l * 1.08, H * .35, 0, true);
+  const fh = add(new THREE.ConeGeometry(H * .12, H * .6, 8), goldM, g, l * 1.2, dk * .7, 0); fh.rotation.z = -PI / 2.6;
+  return { g, dk: dk + .06, l, B, H, poopY: dk + H * .55 };
+}
+// voiles sombres gonflées, avec liseré de couleur et emblème
+function sailTex(col, emb) { return canvasTex(512, 512, (x, w, h) => { const g = x.createLinearGradient(0, 0, 0, h); g.addColorStop(0, '#2a2226'); g.addColorStop(1, '#151116'); x.fillStyle = g; x.fillRect(0, 0, w, h);
+  for (let i = 0; i < 2400; i++) { x.fillStyle = `rgba(${Math.random() < .5 ? '255,255,255' : '0,0,0'},${Math.random() * .05})`; x.fillRect(Math.random() * w, Math.random() * h, rand(2, 14), rand(2, 10)) }
+  x.strokeStyle = 'rgba(255,240,220,.09)'; x.lineWidth = 2; for (let i = 1; i < 8; i++) { x.beginPath(); x.moveTo(i * w / 8, 0); x.lineTo(i * w / 8, h); x.stroke() }
+  [.16, .3].forEach(k => { x.fillStyle = 'rgba(255,240,220,.1)'; x.fillRect(0, h * k, w, 3); x.fillStyle = 'rgba(220,200,170,.35)'; for (let i = 8; i < w; i += 14) x.fillRect(i, h * k - 4, 2, 9) });
+  x.strokeStyle = col; x.lineWidth = 20; x.strokeRect(10, 10, w - 20, h - 20); if (emb) emb(x, w, h) }) }
+function sail(w, h, tex) { const geo = new THREE.PlaneGeometry(w, h, 12, 10), p = geo.attributes.position; for (let i = 0; i < p.count; i++) { const u = p.getX(i) / w + .5, v = p.getY(i) / h + .5; p.setZ(i, Math.sin(u * PI) * Math.sin(v * PI * .9 + .1) * w * .16) } geo.computeVertexNormals();
+  const m = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({ map: tex, roughness: .85, side: THREE.DoubleSide })); m.castShadow = true; return m }
+function mast(ship, x, h, yards, texs, deckY, B) { const p = ship.root;
+  add(new THREE.CylinderGeometry(.16 * h / 14, .26 * h / 14, h, 12), darkWood, p, x, deckY + h / 2);
+  yards.forEach(([y, w, sh], i) => { add(new THREE.CylinderGeometry(.1, .1, w, 8), darkWood, p, x, deckY + y, 0).rotation.x = PI / 2; [-1, 1].forEach(s => add(new THREE.SphereGeometry(.12, 8, 6), goldM, p, x, deckY + y, s * w / 2));
+    if (sh) { const s = sail(w * .92, sh, texs[i] || texs[texs.length - 1]); s.rotation.y = PI / 2; s.position.set(x + .1, deckY + y - sh / 2 - .15, 0); p.add(s); ship.sails.push(s) } });
+  // haubans (cordages) vers les bords
+  const pts = [], top = deckY + h * .92; for (let i = -3; i <= 3; i++) { if (!i) continue; pts.push(x, top, 0, x + i * .35, deckY + .6, Math.sign(i) * B / 2) }
+  [-1, 1].forEach(sd => { const b1 = [x + sd * .35, deckY + .6, sd * B / 2], b2 = [x + sd * 1.05, deckY + .6, sd * B / 2]; for (let k = 1; k < Math.round(h / 1.1); k++) { const t = k / Math.round(h / 1.1) * .85; pts.push(x + (b1[0] - x) * t, top + (b1[1] - top) * t, b1[2] * t, x + (b2[0] - x) * t, top + (b2[1] - top) * t, b2[2] * t) } });
+  const lg = new THREE.BufferGeometry(); lg.setAttribute('position', new THREE.Float32BufferAttribute(pts, 3)); p.add(new THREE.LineSegments(lg, ropeM));
+}
+// drapeau QDGZ (crâne de robot et sabres croisés, dessin original)
+// drapeau QDGZ : crâne robot coiffé d'un tricorne, engrenage, sabres croisés, banderole (dessin original)
+const flagT = canvasTex(640, 400, (x) => { x.scale(2, 2); const W = 320, H = 200;
+  x.fillStyle = '#0a0a0c'; x.fillRect(0, 0, W, H); for (let i = 0; i < 1500; i++) { x.fillStyle = `rgba(255,255,255,${Math.random() * .035})`; x.fillRect(Math.random() * W, Math.random() * H, 1.5, 1.5) }
+  x.strokeStyle = '#c9973a'; x.lineWidth = 3; x.strokeRect(6, 6, W - 12, H - 12); x.lineWidth = 1; x.strokeRect(11, 11, W - 22, H - 22);
+  const sabre = (sx, sy, ang) => { x.save(); x.translate(sx, sy); x.rotate(ang); const g = x.createLinearGradient(0, -5, 0, 5); g.addColorStop(0, '#f4f6f8'); g.addColorStop(1, '#8a929c'); x.fillStyle = g;
+    x.beginPath(); x.moveTo(0, -4); x.quadraticCurveTo(70, -14, 132, -2); x.quadraticCurveTo(70, 2, 0, 4); x.closePath(); x.fill(); x.fillStyle = '#d4a440'; x.fillRect(-4, -10, 6, 20); x.fillStyle = '#3a2410'; x.fillRect(-22, -3, 18, 6); x.fillStyle = '#d4a440'; x.beginPath(); x.arc(-24, 0, 4.5, 0, 7); x.fill(); x.restore() };
+  sabre(50, 170, -.62); sabre(270, 170, PI + .62);
+  x.save(); x.translate(160, 86); x.fillStyle = '#21180e'; x.strokeStyle = '#b8892e'; x.lineWidth = 2.5; x.beginPath(); for (let i = 0; i < 48; i++) { const a = i / 48 * PI * 2, r0 = i % 4 < 2 ? 64 : 56; x.lineTo(Math.cos(a) * r0, Math.sin(a) * r0) } x.closePath(); x.fill(); x.stroke();
+  const sg = x.createLinearGradient(0, -48, 0, 42); sg.addColorStop(0, '#f4f4f2'); sg.addColorStop(1, '#a3a8ae'); x.fillStyle = sg;
+  x.beginPath(); x.moveTo(-40, 10); x.bezierCurveTo(-46, -54, 46, -54, 40, 10); x.lineTo(34, 22); x.lineTo(-34, 22); x.closePath(); x.fill(); x.fillRect(-26, 22, 52, 20);
+  x.fillStyle = '#0a0a0c'; for (let i = 0; i < 5; i++) x.fillRect(-21 + i * 9.5, 26, 4, 16);
+  x.fillStyle = '#1a0000'; x.beginPath(); x.roundRect(-33, -8, 66, 16, 6); x.fill(); x.shadowColor = '#ff2a2a'; x.shadowBlur = 14; x.fillStyle = '#ff3a30'; x.beginPath(); x.roundRect(-28, -5, 24, 10, 4); x.roundRect(4, -5, 24, 10, 4); x.fill(); x.shadowBlur = 0;
+  x.fillStyle = '#c9973a'; [[-36, 14], [36, 14], [-22, 32], [22, 32]].forEach(([a, b]) => { x.beginPath(); x.arc(a, b, 2.6, 0, 7); x.fill() });
+  x.fillStyle = '#2a2a2e'; x.beginPath(); x.moveTo(0, 9); x.lineTo(-5, 18); x.lineTo(5, 18); x.fill();
+  x.strokeStyle = '#5a5f66'; x.lineWidth = 1.5; x.beginPath(); x.moveTo(15, -28); x.lineTo(11, -20); x.lineTo(17, -14); x.stroke();
+  x.fillStyle = '#121010'; x.beginPath(); x.moveTo(-64, -26); x.quadraticCurveTo(0, -16, 64, -26); x.quadraticCurveTo(42, -62, 0, -72); x.quadraticCurveTo(-42, -62, -64, -26); x.fill();
+  x.strokeStyle = '#d4a440'; x.lineWidth = 2.5; x.beginPath(); x.moveTo(-64, -26); x.quadraticCurveTo(0, -16, 64, -26); x.stroke(); x.fillStyle = '#ff2a2a'; x.beginPath(); x.arc(-26, -36, 6, 0, 7); x.fill(); x.fillStyle = '#d4a440'; x.beginPath(); x.arc(-26, -36, 2.5, 0, 7); x.fill(); x.restore();
+  x.fillStyle = '#5a080c'; [[70, 92, 78], [250, 228, 242]].forEach(([a, b, c]) => { x.beginPath(); x.moveTo(a, 166); x.lineTo(b, 160); x.lineTo(b, 186); x.lineTo(a, 192); x.lineTo(c, 179); x.fill() });
+  x.fillStyle = '#9a1018'; x.beginPath(); x.moveTo(88, 156); x.quadraticCurveTo(160, 148, 232, 156); x.lineTo(232, 184); x.quadraticCurveTo(160, 176, 88, 184); x.closePath(); x.fill(); x.strokeStyle = '#d4a440'; x.lineWidth = 1.5; x.stroke();
+  x.fillStyle = '#f3d58a'; x.font = '700 22px Georgia'; x.textAlign = 'center'; x.shadowColor = '#000'; x.shadowBlur = 4; x.fillText('Q D G Z', 160, 176); x.shadowBlur = 0 });
+flagT.anisotropy = 8;
+try { const lg = document.createElement('img'); lg.src = flagT.image.toDataURL(); lg.id = 'logo'; $('#brand').parentNode.prepend(lg) } catch (e) { }
+const FLAGS = [];
+function flag(p, x, y, w, h, tex) { const geo = new THREE.PlaneGeometry(w, h, 12, 6); geo.translate(w / 2, 0, 0); const m = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({ map: tex, side: THREE.DoubleSide, roughness: .9 }));
+  m.position.set(x, y, 0); m.rotation.y = PI; m.userData.base = geo.attributes.position.array.slice(); m.userData.w = w; FLAGS.push(m); p.add(m); return m }
+// voilures latérales (ailes à baleines dorées) — elles battent doucement
+function wingSail(ship, x, y, z, s, size, col) { const g = new THREE.Group(); g.position.set(x, y, z); ship.root.add(g);
+  const n = 5, span = size, a0 = -.15, a1 = PI * .55; const sh = new THREE.Shape(); sh.moveTo(0, 0); for (let i = 0; i <= 20; i++) { const a = a0 + (a1 - a0) * i / 20, rr = span * (.85 + .15 * Math.sin(i / 20 * PI * 4)); sh.lineTo(Math.cos(a) * rr, Math.sin(a) * rr) } sh.lineTo(0, 0);
+  const mem = new THREE.Mesh(new THREE.ShapeGeometry(sh, 20), new THREE.MeshStandardMaterial({ color: '#1c1418', roughness: .8, side: THREE.DoubleSide, emissive: col, emissiveIntensity: .08 })); g.add(mem);
+  for (let i = 0; i < n; i++) { const a = a0 + (a1 - a0) * i / (n - 1), rb = add(new THREE.CylinderGeometry(.06, .1, span, 6), goldM, g, Math.cos(a) * span / 2, Math.sin(a) * span / 2, 0); rb.rotation.z = a - PI / 2 }
+  g.rotation.x = s > 0 ? -PI / 2 + .25 : PI / 2 - .25; g.rotation.y = 0; ship.wings.push({ g, s }); return g }
+// propulseurs arrière (flammes)
+function thruster(ship, x, y, z, rad, col) { const p = ship.root; add(new THREE.CylinderGeometry(rad * .8, rad, rad * 2.4, 14), brassM, p, x, y, z).rotation.z = PI / 2;
+  add(new THREE.TorusGeometry(rad * .95, rad * .12, 6, 20), goldM, p, x - rad * 1.2, y, z).rotation.y = PI / 2;
+  const f = new THREE.Mesh(new THREE.ConeGeometry(rad * .8, rad * 5, 16, 1, true), new THREE.MeshBasicMaterial({ color: col, transparent: true, opacity: .75, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide }));
+  f.rotation.z = PI / 2; f.position.set(x - rad * 3.6, y, z); p.add(f); const c = new THREE.Mesh(new THREE.SphereGeometry(rad * .7, 12, 8), glow(col, 4)); c.position.set(x - rad * 1.3, y, z); p.add(c); ship.flames.push(f); ship.exhaust.push(new V(x - rad * 6, y, z)) }
+
+/* =====================================================================
+   4. PIRATES ROBOTS : capitaine, seconds et matelots
+   ===================================================================== */
+function cutlass(p, x, y, z) { const g = new THREE.Group(); g.position.set(x, y, z); p.add(g);
+  add(new THREE.CylinderGeometry(.04, .045, .28, 8), darkWood, g); add(new THREE.TorusGeometry(.12, .025, 6, 14, PI * 1.2), goldM, g, 0, .13, 0).rotation.y = PI / 2;
+  const b = new THREE.Shape(); b.moveTo(-.05, 0); b.lineTo(.05, 0); b.quadraticCurveTo(.12, .7, -.05, 1.15); b.quadraticCurveTo(.0, .6, -.05, 0);
+  add(new THREE.ExtrudeGeometry(b, { depth: .012, bevelEnabled: false }), new THREE.MeshStandardMaterial({ color: '#dfe5ec', metalness: 1, roughness: .15 }), g, 0, .15, -.006); return g }
+function pistol(p, x, y, z) { const g = new THREE.Group(); g.position.set(x, y, z); p.add(g); add(new THREE.BoxGeometry(.07, .2, .12), darkWood, g).rotation.x = -.4; add(new THREE.CylinderGeometry(.035, .045, .48, 8), gunM, g, 0, .08, .24).rotation.x = PI / 2; add(new THREE.SphereGeometry(.045, 8, 6), goldM, g, 0, .12, .02); return g }
+function pirate(col, captain) {
+  const g = new THREE.Group(), j = {}, c = new THREE.Color(col);
+  const coatM = new THREE.MeshStandardMaterial({ color: captain ? '#6e0a10' : c.clone().multiplyScalar(.42), roughness: .6, side: THREE.DoubleSide });
+  const lapel = new THREE.MeshStandardMaterial({ color: captain ? '#1a0a0a' : c.clone().multiplyScalar(.85), roughness: .5 });
+  const boot = new THREE.MeshStandardMaterial({ color: '#120d0a', roughness: .45 }), hatM = new THREE.MeshStandardMaterial({ color: '#120e0c', roughness: .7 });
+  [-1, 1].forEach(s => { const leg = new THREE.Group(); leg.position.set(s * .17, .8, 0); g.add(leg); add(new THREE.CylinderGeometry(.09, .08, .5, 10), steel, leg, 0, -.22, 0); add(new THREE.CylinderGeometry(.12, .11, .36, 10), boot, leg, 0, -.6, 0); add(new THREE.CylinderGeometry(.16, .13, .12, 12), boot, leg, 0, -.4, 0); add(new THREE.BoxGeometry(.2, .1, .34), boot, leg, 0, -.76, .06); add(new THREE.CylinderGeometry(.13, .13, .05, 10), goldM, leg, 0, -.42, 0); j[s < 0 ? 'lL' : 'lR'] = leg });
+  add(new THREE.CapsuleGeometry(.3, .5, 6, 14), steel, g, 0, 1.25, 0);
+  const skirt = new THREE.LatheGeometry([[.33, .55], [.37, .2], [.46, -.15], [.56, -.48]].map(([a, b]) => new THREE.Vector2(a, b * (captain ? 1.15 : 1))), 24); add(skirt, coatM, g, 0, captain ? 1.0 : 1.05, 0);
+  add(new THREE.TorusGeometry(.56, .025, 6, 32), goldM, g, 0, captain ? .45 : .57, 0).rotation.x = PI / 2;
+  add(new THREE.BoxGeometry(.3, .55, .05), new THREE.MeshStandardMaterial({ color: captain ? '#c9973a' : c.clone().lerp(new THREE.Color('#e8d3a8'), .5), metalness: captain ? .6 : .1, roughness: .45 }), g, 0, 1.3, .31);
+  for (let i = 0; i < 4; i++) add(new THREE.SphereGeometry(.025, 6, 5), goldM, g, 0, 1.47 - i * .1, .345);
+  const jab = add(new THREE.ConeGeometry(.11, .26, 10), new THREE.MeshStandardMaterial({ color: '#f2ece0', roughness: .8 }), g, 0, 1.6, .34); jab.rotation.x = PI + .25;
+  [-1, 1].forEach(s => { const lp = add(new THREE.BoxGeometry(.12, .55, .04), lapel, g, s * .14, 1.42, .3); lp.rotation.z = s * .25; for (let i = 0; i < 3; i++) add(new THREE.SphereGeometry(.035, 8, 6), goldM, g, s * .2, 1.25 - i * .17, .36) });
+  add(new THREE.TorusGeometry(.34, .055, 6, 22), new THREE.MeshStandardMaterial({ color: '#2a1a0e' }), g, 0, 1.0, 0).rotation.x = PI / 2;
+  add(new THREE.BoxGeometry(.16, .13, .06), goldM, g, 0, 1.0, .35);
+  j.core = add(new THREE.CylinderGeometry(.08, .08, .05, 16), glow(captain ? '#ff1e1e' : col, 3), g, 0, 1.52, .33); j.core.rotation.x = PI / 2;
+  [-1, 1].forEach(s => { const tl = add(new THREE.PlaneGeometry(.3, .75), coatM, g, s * .16, .68, -.38); tl.rotation.set(.2, 0, s * .12) });
+  const sash = add(new THREE.TorusGeometry(.4, .045, 6, 22), new THREE.MeshStandardMaterial({ color: captain ? '#d4a440' : col }), g, 0, 1.3, 0); sash.rotation.set(PI / 2, .7, 0);
+  [-1, 1].forEach(s => { add(new THREE.CylinderGeometry(.16, .16, .08, 12), goldM, g, s * .4, 1.66, 0); for (let i = 0; i < 6; i++) add(new THREE.CylinderGeometry(.012, .012, .12, 4), goldM, g, s * .4 + Math.cos(i) * .13, 1.58, Math.sin(i) * .13) });
+  const head = new THREE.Group(); head.position.y = 1.92; g.add(head); j.head = head;
+  add(new RoundedBoxGeometry(.44, .4, .42, 3, .07), steel, head, 0, .05, 0); [-1, 1].forEach(k => { add(new THREE.CylinderGeometry(.06, .06, .06, 12), goldM, head, k * .23, .04, 0).rotation.z = PI / 2; add(new THREE.SphereGeometry(.02, 6, 5), goldM, head, k * .15, -.08, .21) }); add(new THREE.BoxGeometry(.46, .06, .44), gunM, head, 0, -.1, 0);
+  add(new THREE.BoxGeometry(.36, .08, .02), glow(captain ? '#ff1e1e' : col, 3.5), head, 0, .08, .22);
+  if (!captain) add(new THREE.BoxGeometry(.18, .12, .03), new THREE.MeshStandardMaterial({ color: '#0a0a0a' }), head, -.09, .08, .23);
+  const hat = add(new THREE.CylinderGeometry(captain ? .66 : .56, .3, captain ? .3 : .26, 3, 1, true), hatM, head, 0, .36, 0, true); hat.rotation.y = PI / 6 + PI; hat.material = hatM.clone(); hat.material.side = THREE.DoubleSide;
+  add(new THREE.SphereGeometry(.07, 10, 8), new THREE.MeshStandardMaterial({ color: captain ? '#ff2a2a' : col }), head, .26, .38, .12);
+  add(new THREE.BoxGeometry(.2, .05, .02), glow(captain ? '#ff6a1a' : col, 1.2), head, 0, -.04, .22);
+  add(new THREE.CylinderGeometry(.25, .27, .24, 16), hatM, head, 0, .45, 0);
+  add(new THREE.TorusGeometry(.27, .022, 4, 24), goldM, head, 0, .35, 0).rotation.x = PI / 2;
+  const arm = s => { const a = new THREE.Group(); a.position.set(s * .44, 1.6, 0); g.add(a); add(new THREE.CylinderGeometry(.085, .075, .55, 10), coatM, a, 0, -.28, 0); add(new THREE.CylinderGeometry(.12, .1, .16, 12), lapel, a, 0, -.48, 0); add(new THREE.SphereGeometry(.022, 6, 5), goldM, a, 0, -.48, .12); add(new THREE.ConeGeometry(.09, .12, 10, 1, true), new THREE.MeshStandardMaterial({ color: '#f2ece0', side: THREE.DoubleSide }), a, 0, -.58, 0); add(new THREE.SphereGeometry(.08, 10, 8), steel, a, 0, -.62, 0); for (let f = -1; f <= 1; f++) { const fi = add(new THREE.CylinderGeometry(.018, .014, .11, 6), steel, a, f * .035, -.71, .03); fi.rotation.x = .3 } return a };
+  j.aL = arm(-1); j.aR = arm(1);
+  const cs = cutlass(j.aR, 0, -.62, .06); cs.rotation.x = -PI / 2.2;
+  pistol(captain ? j.aL : g, captain ? 0 : .32, captain ? -.64 : 1.0, captain ? .08 : .32);
+  if (!captain) { const pl = add(new THREE.ConeGeometry(.06, .6, 8), new THREE.MeshStandardMaterial({ color: col, emissive: col, emissiveIntensity: .35 }), head, -.2, .58, -.06); pl.rotation.z = .9; add(new THREE.TorusGeometry(.05, .012, 6, 12), goldM, head, .23, -.02, 0).rotation.y = PI / 2 }
+  if (captain) {
+    const pl = add(new THREE.ConeGeometry(.09, .8, 8), new THREE.MeshStandardMaterial({ color: '#ff2a2a', emissive: '#4a0000' }), head, -.22, .6, -.05); pl.rotation.z = .95;
+    for (let i = 0; i < 18; i++) { const a = -PI * .85 + i / 17 * PI * .7; add(new THREE.TorusGeometry(.035, .012, 4, 8), goldM, g, Math.cos(a) * .3, 1.55 + Math.sin(a) * .28, .25).rotation.y = PI / 2 }
+    add(new THREE.CylinderGeometry(.03, .03, .26, 8), new THREE.MeshStandardMaterial({ color: '#5a3a1e' }), head, .12, -.08, .3).rotation.x = PI / 2;
+    j.ember = add(new THREE.SphereGeometry(.035, 8, 6), glow('#ff6a1a', 4), head, .12, -.08, .44);
+    const cape = add(new THREE.PlaneGeometry(1, 1.4, 4, 6), new THREE.MeshStandardMaterial({ color: '#4a0408', side: THREE.DoubleSide, roughness: .7 }), g, 0, 1.05, -.36); j.cape = cape;
+  }
+  return { g, j };
+}
+// matelots robots : petits, ronds, marinière et bandana rouge
+const MG = { body: new THREE.SphereGeometry(.34, 18, 14), eye: new THREE.BoxGeometry(.3, .07, .04), band: new THREE.SphereGeometry(.33, 16, 8, 0, PI * 2, 0, PI / 2.2), limb: new THREE.CylinderGeometry(.05, .045, .3, 8), barrel: new THREE.CylinderGeometry(.18, .18, .32, 12) };
+const stripeT = canvasTex(64, 64, (x) => { for (let i = 0; i < 8; i++) { x.fillStyle = i % 2 ? '#e9e3d6' : '#1f2a44'; x.fillRect(0, i * 8, 64, 8) } });
+const MM = { body: new THREE.MeshStandardMaterial({ map: stripeT, roughness: .6 }), head: steel, eye: glow('#ff2a1a', 3.5), band: new THREE.MeshStandardMaterial({ color: '#b3121a' }), limb: new THREE.MeshStandardMaterial({ color: '#5a6270', metalness: .8, roughness: .35 }), barrel: new THREE.MeshStandardMaterial({ color: '#6b4426', roughness: .7 }) };
+const PARROTS = [];
+function parrot(p, col, x, y, z) { const g = new THREE.Group(); g.position.set(x, y, z); p.add(g); const m = new THREE.MeshStandardMaterial({ color: col, roughness: .5, metalness: .3, envMap: ENV, envMapIntensity: .5 });
+  const bd = add(new THREE.SphereGeometry(.1, 12, 10), m, g, 0, .1, 0); bd.scale.set(.9, 1.4, .9); const hd = new THREE.Group(); hd.position.y = .27; g.add(hd); add(new THREE.SphereGeometry(.08, 12, 10), m, hd);
+  add(new THREE.ConeGeometry(.035, .1, 8), goldM, hd, 0, -.02, .09).rotation.x = PI / 1.7; [-1, 1].forEach(k => add(new THREE.SphereGeometry(.018, 6, 5), glow('#ffe14a', 4), hd, k * .05, .02, .05));
+  [-1, 1].forEach(k => { const w = add(new THREE.BoxGeometry(.03, .2, .12), m, g, k * .09, .1, -.02); w.rotation.z = k * .15 }); const tl = add(new THREE.BoxGeometry(.06, .22, .02), new THREE.MeshStandardMaterial({ color: '#d4a440' }), g, 0, -.06, -.08); tl.rotation.x = -.5;
+  PARROTS.push({ hd, g, ph: rand(0, 6) }); return g }
+function gear(b, kind, col) { const j = b.j, g = b.g, H = j.head;
+  const tube = (p, len, r0, x, y, z, rx) => { const t = add(new THREE.CylinderGeometry(r0 * .8, r0, len, 12), brassM, p, x, y, z); t.rotation.x = rx; add(new THREE.TorusGeometry(r0, .012, 6, 16), goldM, p, x, y + len / 2 * Math.cos(rx), z + len / 2 * Math.sin(rx)).rotation.x = rx + PI / 2; return t };
+  if (kind === 'capitaine') { parrot(g, '#e0262a', -.42, 1.72, -.02); add(new THREE.TorusGeometry(.06, .012, 6, 16), goldM, H, .1, .08, .23) }
+  if (kind === 'cartes') tube(j.aL, .5, .045, 0, -.66, .14, PI / 2.3);
+  if (kind === 'scribe') { [-1, 1].forEach(k => add(new THREE.TorusGeometry(.055, .012, 6, 16), goldM, H, k * .09, .08, .23)); const q = add(new THREE.ConeGeometry(.03, .5, 6), new THREE.MeshStandardMaterial({ color: '#f5f5f0' }), H, .22, .2, -.05); q.rotation.z = -.5 }
+  if (kind === 'vigie') { tube(g, 1.1, .07, -.15, 1.35, -.33, .9); add(new THREE.TorusGeometry(.065, .014, 6, 18), goldM, H, .09, .08, .23) }
+  if (kind === 'studio') parrot(g, '#ff4081', .42, 1.72, -.02);
+  if (kind === 'montage') { const hn = add(new THREE.ConeGeometry(.12, .5, 14, 1, true), goldM, j.aL, 0, -.75, .2); hn.rotation.x = -PI / 2 }
+  if (kind === 'tresor') { add(new THREE.SphereGeometry(.13, 10, 8), new THREE.MeshStandardMaterial({ color: '#5a3a1e' }), g, .3, .92, .25); add(new THREE.TorusGeometry(.07, .012, 6, 14), goldM, g, -.3, .92, .3); add(new THREE.BoxGeometry(.02, .12, .02), goldM, g, -.3, .84, .3) }
+  if (kind === 'comptoir') { add(new THREE.BoxGeometry(.32, .26, .12), new THREE.MeshStandardMaterial({ color: '#4a2a5a', roughness: .6 }), g, .38, .95, .05, true); parrot(g, '#b388ff', -.42, 1.72, -.02) }
+}
+const BANDS = ['#b3121a', '#1f2a44', '#111', '#d4a440', '#2e6b3a'].map(c => new THREE.MeshStandardMaterial({ color: c, roughness: .7 }));
+function matelot() { const g = new THREE.Group(), b = new THREE.Group(); g.add(b);
+  const bd = new THREE.Mesh(MG.body, MM.body); bd.position.y = .5; bd.scale.set(1, .9, 1); b.add(bd); bd.castShadow = true;
+  const hd = new THREE.Mesh(new THREE.SphereGeometry(.24, 14, 10), MM.head); hd.position.y = .92; b.add(hd);
+  const ey = new THREE.Mesh(MG.eye, MM.eye); ey.position.set(0, .95, .21); b.add(ey);
+  const bn = new THREE.Mesh(MG.band, BANDS[Math.floor(Math.random() * BANDS.length)]); bn.position.y = .96; bn.scale.setScalar(.78); b.add(bn);
+  if (Math.random() < .35) { const pt = new THREE.Mesh(new THREE.BoxGeometry(.14, .1, .03), new THREE.MeshStandardMaterial({ color: '#0a0a0a' })); pt.position.set(-.08, .95, .23); b.add(pt) }
+  const L = (x, y) => { const p = new THREE.Group(); p.position.set(x, y, 0); b.add(p); const m = new THREE.Mesh(MG.limb, MM.limb); m.position.y = -.14; p.add(m); return p };
+  const s = { g, b, aL: L(-.34, .6), aR: L(.34, .6), lL: L(-.13, .22), lR: L(.13, .22) };
+  const mop = new THREE.Group(); mop.position.y = -.28; s.aR.add(mop); add(new THREE.CylinderGeometry(.025, .025, .9, 6), darkWood, mop, 0, -.1, .3).rotation.x = PI / 2.6; add(new THREE.CylinderGeometry(.1, .14, .12, 8), new THREE.MeshStandardMaterial({ color: '#cfc6b0' }), mop, 0, -.35, .7); mop.visible = false; s.mop = mop;
+  const br = new THREE.Mesh(MG.barrel, MM.barrel); br.position.y = 1.35; br.visible = false; b.add(br); s.barrel = br;
+  return s }
+
+/* =====================================================================
+   5. LE GALION QDGZ EN COUPE : 3 étages de salles + pont supérieur
+   ===================================================================== */
+const LBL = [], tmp2 = new V(), pick = [];
+function tag(html, col, obj, off, cls = 'tag') { const d = document.createElement('div'); d.className = cls; d.style.setProperty('--c', col); d.innerHTML = html; $('#labels').appendChild(d); const l = { d, obj, cut: cls.startsWith('plate'), off: off.clone(), far: cls === 'plate' ? 215 : obj === GR || cls !== 'tag' ? 9999 : 9999 }; LBL.push(l); return d }
+const cl = new V(), ct = new V(); function drawLabels() { const w = innerWidth / 2, h = innerHeight / 2, cp = cam.position; GR.worldToLocal(cl.copy(cp)); GR.worldToLocal(ct.copy(ctl.target)); const dz = (ct.z - cl.z) / (ct.distanceTo(cl) || 1), inside = cl.z > 4 && dz < -.6;
+  LBL.forEach(l => { tmp2.copy(l.off); l.obj.localToWorld(tmp2); const dist = tmp2.distanceTo(cp); tmp2.project(cam); const vis = (!l.cut || inside) && tmp2.z < 1 && Math.abs(tmp2.x) < 1.1 && Math.abs(tmp2.y) < 1.1 && dist < l.far;
+    l.d.style.display = vis ? '' : 'none'; if (vis) l.d.style.transform = `translate(${Math.round(tmp2.x * w + w)}px,${Math.round(-tmp2.y * h + h)}px) translate(-50%,-100%)` }) }
+const G = { root: new THREE.Group(), base: new V(0, 0, 0), phase: 0, sails: [], wings: [], flames: [], exhaust: [], crew: [], big: true };
+scene.add(G.root); const GR = G.root; const GS = 1.8; GR.scale.setScalar(GS);
+const copperM = new THREE.MeshStandardMaterial({ map: plankT, color: '#9a6a44', metalness: .75, roughness: .4, envMap: ENV, envMapIntensity: .7 });
+const BH = 9.2, XS = -32, XB = 35, FL = [1, 7, 13, 19];
+const hb = (x, y) => { let w = BH; if (x > 12) w *= Math.sqrt(Math.max(0, (XB - x) / (XB - 12))); const t = y < 4 ? .42 + .58 * Math.sin(Math.max(0, (y + 3) / 7) * PI / 2) : 1; return Math.max(.25, w * t * (1 - .07 * Math.max(0, (y - 12) / 8))) };
+function outline(y, off = 0) { const P = []; for (let x = XS + off; x <= XB - off; x += .8) P.push([x, -(hb(x, y) - off)]); return P }
+function shapeFull(y, off = 0) { const P = outline(y, off), s = new THREE.Shape(); s.moveTo(P[0][0], 0); P.forEach(p => s.lineTo(p[0], p[1])); for (let i = P.length - 1; i >= 0; i--) s.lineTo(P[i][0], -P[i][1]); s.lineTo(P[0][0], 0); return s }
+function shapeHalf(y, th) { const O = outline(y), I = outline(y, th), s = new THREE.Shape(); s.moveTo(XS, 0); O.forEach(p => s.lineTo(p[0], p[1])); s.lineTo(XB, 0); for (let i = I.length - 1; i >= 0; i--) s.lineTo(I[i][0], I[i][1]); s.lineTo(XS + th, 0); s.lineTo(XS, 0); return s }
+const slab = (s, top, d, mat, trim) => { const m = add(new THREE.ExtrudeGeometry(s, { depth: d, bevelEnabled: false, curveSegments: 6 }), mat, GR, 0, top, 0, trim); m.rotation.x = PI / 2; return m };
+// coque : ventre plein, flanc arrière (côté opposé) ouvert sur l'intérieur, bastingage complet en haut
+for (let y = -3; y < 20; y++) {
+  if (y < 0) slab(shapeFull(y + 1), y + 1, 1, copperM, y === -1);
+  else if (y < 19) slab(shapeHalf(y + 1, .6), y + 1, 1, blackM, y === 6 || y === 12 || y === 18);
+  else { const s = shapeFull(y + 1); s.holes.push(new THREE.Path(outline(y + 1, .45).map(p => new THREE.Vector2(p[0], p[1])).concat(outline(y + 1, .45).reverse().map(p => new THREE.Vector2(p[0], -p[1]))))); slab(s, y + 1, 1, blackM, true) }
+}
+// planchers des étages (bord doré côté coupe)
+FL.forEach((y, i) => slab(shapeFull(y, .3), y, i ? .45 : 1, deckM, true));
+// bandeaux dorés et sabords côté extérieur
+for (let x = -24; x <= 16; x += 5) { const z = -hb(x, 9.5); const cn = add(new THREE.CylinderGeometry(.28, .38, 2.4, 12), gunM, GR, x, 9.8, z - .9); cn.rotation.x = PI / 2; add(new THREE.BoxGeometry(1.2, 1, .1), blackM, GR, x, 10.9, z - .5).rotation.x = -.9 }
+[3.5, 15.5].forEach(y => { for (let x = -26; x <= 22; x += 4) { add(new THREE.BoxGeometry(1, .8, .12), goldM, GR, x, y + .3, -hb(x, y) - .02); add(new THREE.BoxGeometry(.7, .55, .1), glow('#ffb347', 1.3), GR, x, y + .3, -hb(x, y) - .04) } });
+[6.6, 12.6, 18.7].forEach((y, k) => { const P = []; for (let x = XS + .2; x <= XB - 1; x += 1) P.push(new V(x, y, -hb(x, y) - .12)); add(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(P), 90, k === 2 ? .16 : .22, 6), k === 2 ? goldM : blackM, GR) });
+// étais (cordages entre mâts et beaupré)
+{ const T = [[2, 59], [19, 51], [-13, 47]], B = [49, 25.3, 0], L = [...T.flatMap(([x, y]) => [x, y, 0, ...B]), -13, 47, 0, 2, 40, 0, 2, 59, 0, 19, 51, 0]; const lg = new THREE.BufferGeometry(); lg.setAttribute('position', new THREE.Float32BufferAttribute(L.map((v, i) => i % 3 === 0 && v === 49 ? 49 : v), 3)); GR.add(new THREE.LineSegments(lg, ropeM)) }
+// accastillage du pont : cabestan, caillebotis, cloche, rouleaux de cordage, tonneaux
+{ const cap = add(new THREE.CylinderGeometry(.9, 1.1, 1.4, 16), darkWood, GR, -8, 19.7, 0, true); for (let i = 0; i < 8; i++) { const b = add(new THREE.BoxGeometry(2.6, .12, .12), darkWood, GR, -8, 20.2, 0); b.rotation.y = i * PI / 8 }
+  [[8, -3], [8, 3], [-3, 0]].forEach(([x, z]) => { add(new THREE.BoxGeometry(3, .25, 2.4), darkWood, GR, x, 19.12, z, true); for (let i = 0; i < 6; i++) add(new THREE.BoxGeometry(.08, .27, 2.3), goldM, GR, x - 1.25 + i * .5, 19.13, z) });
+  const bell = add(new THREE.CylinderGeometry(.25, .45, .6, 16, 1, true), goldM, GR, 24, 21.4, 0); add(new THREE.BoxGeometry(.12, 2.4, .12), darkWood, GR, 24, 20.2, 0);
+  [[14, 6], [-1, -6], [22, -4]].forEach(([x, z]) => { add(new THREE.TorusGeometry(.5, .14, 6, 18), new THREE.MeshStandardMaterial({ color: '#b08a5a', roughness: .9 }), GR, x, 19.15, z).rotation.x = PI / 2 });
+  [[-15, -6], [-15, -4.8], [-14, -5.4]].forEach(([x, z]) => { add(new THREE.CylinderGeometry(.5, .5, 1.2, 12), MM.barrel, GR, x, 19.6, z) }) }
+// galerie arrière, gouvernail, figure de proue, beaupré
+for (let i = 0; i < 6; i++) { const z = -7 + i * 2.8; add(new THREE.BoxGeometry(.2, 2.4, 1.6), goldM, GR, XS - .1, 15.4, z); add(new THREE.BoxGeometry(.25, 1.9, 1.2), glow('#ffcc70', 2.2), GR, XS - .15, 15.4, z) }
+add(new THREE.BoxGeometry(.6, 10, 3), blackM, GR, XS - .9, 3, 0, true);
+{ const fg = pirate('#d4a440', false); fg.g.traverse(o => { if (o.isMesh) o.material = goldM }); fg.g.position.set(XB - .2, 13.5, 0); fg.g.rotation.set(0, PI / 2, -1.05); fg.g.scale.setScalar(2.1); GR.add(fg.g);
+  [-1, 1].forEach(s => { const w = add(new THREE.ConeGeometry(.9, 5, 4), goldM, GR, XB - 1.6, 16, s * 1.6); w.rotation.set(s * .9, 0, -.6) }) }
+const bsp = add(new THREE.CylinderGeometry(.25, .4, 18, 10), darkWood, GR, XB + 6, 22, 0); bsp.rotation.z = -1.2;
+// gaillard d'arrière (passerelle du capitaine) + gaillard d'avant
+const QX = [-32, -19];
+slab(new THREE.Shape([new THREE.Vector2(QX[0], -hb(QX[0], 22) + .4), new THREE.Vector2(QX[1], -hb(QX[1], 22) + .4), new THREE.Vector2(QX[1], hb(QX[1], 22) - .4), new THREE.Vector2(QX[0], hb(QX[0], 22) - .4)]), 22.6, .5, deckM, true);
+add(new THREE.BoxGeometry(13, 3.6, .4), blackM, GR, -25.5, 20.8, -BH + .4, true);
+[-1, 1].forEach(s => { for (let i = 0; i <= 10; i++) add(new THREE.CylinderGeometry(.07, .07, .9, 6), goldM, GR, -32 + i * 1.3, 23.05, s * (BH - .5)); add(new THREE.BoxGeometry(13, .14, .2), goldM, GR, -25.5, 23.55, s * (BH - .5)) });
+for (let i = 0; i <= 12; i++) add(new THREE.CylinderGeometry(.07, .07, .9, 6), goldM, GR, -19, 23.05, -BH + .5 + i * (2 * BH - 1) / 12);
+add(new THREE.BoxGeometry(6, 1.2, 9), blackM, GR, 27, 21.6, 0, true);
+// escalier vers la passerelle
+for (let i = 0; i < 7; i++) add(new THREE.BoxGeometry(.7, .22, 2.6), deckM, GR, -14.6 - i * .65, 19.2 + i * .52, 6.2);
+[-1, 1].forEach(s => add(new THREE.BoxGeometry(.25, 3.6, 2 * BH - 1.4), blackM, GR, -19, 20.8, 0, true));
+for (let i = 0; i < 4; i++) { add(new THREE.BoxGeometry(.3, 1.6, 1.4), glow('#ffcc70', 1.8), GR, -18.8, 21, -6 + i * 4); add(new THREE.BoxGeometry(.32, 1.9, 1.7), goldM, GR, -18.85, 21, -6 + i * 4) }
+add(new THREE.BoxGeometry(13, 3.6, .4), blackM, GR, -25.5, 20.8, BH - .4, true);
+// mâts, voiles, haubans, drapeau
+const T0 = sailTex('#d4a440', (x, w, h) => { x.globalAlpha = .95; x.drawImage(flagT.image, w * .11, h * .25, w * .78, h * .48) }), T1 = sailTex('#d4a440');
+[[19, 32, [[11, 13, 8.4], [19, 10.5, 6.6], [26, 8, 5]]], [2, 40, [[12, 15, 9.6], [21, 12.5, 8], [29.5, 9.5, 6], [36, 6.5, 3.6]]], [-13, 28, [[11, 10.5, 6.4], [18.5, 8, 5]]]].forEach(([x, h, Y], i) => mast(G, x, h, Y, i === 1 ? [T0, T1] : [T1], 19, 2 * BH - 1));
+add(new THREE.CylinderGeometry(1.6, 1.2, .6, 16), darkWood, GR, 2, 19 + 26, 0, true);
+const jib = sail(8, 10, T1); jib.position.set(29, 28, 0); jib.rotation.y = PI / 2; GR.add(jib); G.sails.push(jib);
+flag(GR, 2, 19 + 41, 7, 4.2, flagT);
+// ailes, propulseurs, canons du pont, lanternes
+wingSail(G, 2, 14, -BH - .3, 1, 20, '#ff2a2a'); wingSail(G, 26, 14, -hb(26, 14) - .2, 1, 9, '#ff2a2a');
+[[4, -4], [4, 4], [10, 0]].forEach(([y, z]) => thruster(G, XS - 1.5, y, z, 1.4, '#ff7a2a'));
+for (let i = 0; i < 6; i++) { const cn = add(new THREE.CylinderGeometry(.3, .42, 2.6, 12), gunM, GR, -12 + i * 6, 20.3, -BH - .9); cn.rotation.x = PI / 2 }
+[[-32.5, 25, 0], [33, 23, 0], [-19, 24.5, BH - .5]].forEach(([x, y, z]) => { add(new THREE.SphereGeometry(.45, 12, 8), glow('#ffb347', 4), GR, x, y, z); const pl = new THREE.PointLight('#ffb347', 90, 34, 1.6); pl.position.set(x, y, z); GR.add(pl) });
+// roue de barre + ULTRON
+const wheel = new THREE.Group(); wheel.position.set(-23.5, 24.1, 0); wheel.rotation.y = PI / 2; GR.add(wheel); G.wheel = wheel;
+add(new THREE.TorusGeometry(.95, .08, 8, 30), darkWood, wheel); for (let i = 0; i < 8; i++) add(new THREE.CylinderGeometry(.05, .05, 2.4, 6), goldM, wheel).rotation.z = i * PI / 8;
+add(new THREE.BoxGeometry(.3, 1.5, .3), darkWood, GR, -23.2, 23.3, 0);
+const ULT = pirate('#ff2a2a', true); ULT.g.position.set(-25.6, 22.6, 0); ULT.g.rotation.y = PI / 2 - .5; ULT.g.scale.setScalar(1.85); GR.add(ULT.g);
+const crewOn = (n, y, x1, x2, zf) => { for (let i = 0; i < n; i++) { const m = matelot(); m.g.scale.setScalar(1.35); const x = rand(x1, x2); m.g.position.set(x, y, zf(x)); GR.add(m.g); G.crew.push({ ...m, tg: null, t: rand(0, 3), task: 'idle', xs: [x1, x2], zf, ph: rand(0, 6) }) } };
+const SEAT = []; [[2, 31, -3.5], [2, 31, 2.8], [2, 40, -1.5], [19, 30, 2.2], [-13, 30, -2]].forEach(([x, y, z]) => { const m = matelot(); m.g.scale.setScalar(1.3); m.g.position.set(x + .35, y - .1, z); GR.add(m.g); m.lL.rotation.x = m.lR.rotation.x = -1.4; SEAT.push({ m, ph: rand(0, 6) }) });
+const BEAMS = []; [-1.6, 1.6].forEach(z => { const bm = new THREE.Mesh(new THREE.ConeGeometry(5, 70, 24, 1, true), new THREE.MeshBasicMaterial({ color: '#fff1c8', transparent: true, opacity: .07, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide }));
+  bm.geometry.translate(0, -35, 0); const piv = new THREE.Group(); piv.position.set(XB - 3, 11, z); GR.add(piv); piv.add(bm); add(new THREE.CylinderGeometry(.6, .5, 1, 14), brassM, piv); add(new THREE.CircleGeometry(.5, 16), glow('#fff4d0', 6), piv, 0, -.51, 0).rotation.x = PI / 2; BEAMS.push({ piv, z }) });
+const holo = new THREE.Mesh(new THREE.CircleGeometry(4, 48), new THREE.MeshBasicMaterial({ map: flagT, color: '#ff4a3a', transparent: true, opacity: .55, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide })); holo.position.set(-29, 31, 0); holo.rotation.y = PI / 2; GR.add(holo);
+const holoR = add(new THREE.TorusGeometry(4.3, .06, 6, 64), glow('#ff2a2a', 4), GR, -29, 31, 0); holoR.rotation.y = PI / 2;
+{ const nt = canvasTex(512, 128, (x, w, h) => { x.fillStyle = '#0b0807'; x.fillRect(0, 0, w, h); x.strokeStyle = '#d4a440'; x.lineWidth = 8; x.strokeRect(6, 6, w - 12, h - 12); x.fillStyle = '#e8b04a'; x.font = '700 78px Georgia'; x.textAlign = 'center'; x.fillText('Q D G Z', w / 2, h * .72) });
+  const np = add(new THREE.PlaneGeometry(9, 2.25), new THREE.MeshStandardMaterial({ map: nt, metalness: .5, roughness: .4, emissive: '#3a2a0a', emissiveMap: nt, emissiveIntensity: .6 }), GR, XS - .45, 12.3, 0); np.rotation.y = -PI / 2 }
+crewOn(14, 19, -16, 26, x => rand(-hb(x, 19) + 1.8, hb(x, 19) - 1.8));
+
+/* ---------- les salles ---------- */
+const ROOMS = [], AG = [];
+const LV = { 1: { y: 13, h: 5.55 }, 2: { y: 7, h: 5.55 }, 3: { y: 1, h: 5.55 } };
+const LAYOUT = { 1: [['cabine', -31, -20], ['conseil', -20, -9], ['PROF-01', -9, 1], ['INK-04', 1, 11], ['HUNT-05', 11, 21], ['atelier', 21, 30]],
+  2: [['GIT-02', -31, -20], ['REEL-03', -20, -9], ['archives', -9, 1], ['CASH-06', 1, 11], ['SHOP-07', 11, 21], ['infirmerie', 21, 29]],
+  3: [['machines', -30, -13], ['armurerie', -13, -3], ['cambuse', -3, 7], ['soute', 7, 18]] };
+const woodIn = new THREE.MeshStandardMaterial({ map: deckT, color: '#c9a07a', roughness: .8 });
+const wallIn = new THREE.MeshStandardMaterial({ map: deckT, color: '#8a5e3c', roughness: .85 });
+const lightsPos = MOB ? [[-14, 1], [6, 1], [-14, 2], [6, 2], [-8, 3]] : [[-25, 1], [-9, 1], [6, 1], [17, 1], [-25, 2], [-9, 2], [6, 2], [17, 2], [-20, 3], [-3, 3], [12, 3]];
+lightsPos.forEach(([x, lv]) => { const L = new THREE.PointLight('#ffcf95', 42, 26, 1.4); L.position.set(x, LV[lv].y + 4.3, 1); GR.add(L) });
+const canvasHi = (w, h, f) => { const t = canvasTex(w, h, f); t.anisotropy = r.capabilities.getMaxAnisotropy(); return t };
+function room(def, x1, x2, lv) { const { y, h } = LV[lv], cx = (x1 + x2) / 2, hbk = hb(cx, y + 2), zb = Math.max(-hbk + .65, -4.2), zf = hb(cx, y), R = { def, x1, x2, cx, y, h, zb, zf, lv, g: new THREE.Group() }; GR.add(R.g);
+  // paroi du fond, portes de séparation, bande de couleur, lanterne, hublots
+  add(new THREE.BoxGeometry(x2 - x1 - .1, h, .2), wallIn, R.g, cx, y + h / 2, zb);
+  add(new THREE.BoxGeometry(x2 - x1 - .1, .18, .25), glow(def.couleur, 1.6), R.g, cx, y + h - .25, zb + .12);
+  [x1, x2].forEach(x => { const d = zf - 3.4 - zb; if (d > .5) add(new THREE.BoxGeometry(.3, h, d), woodIn, R.g, x, y + h / 2, zb + d / 2); add(new THREE.BoxGeometry(.32, h, .12), goldM, R.g, x, y + h / 2, zb + d) });
+  [cx - (x2 - x1) * .28, cx + (x2 - x1) * .28].forEach(px => { add(new THREE.CylinderGeometry(.6, .6, .1, 20), goldM, R.g, px, y + h * .62, zb + .12).rotation.x = PI / 2; add(new THREE.CylinderGeometry(.48, .48, .12, 20), glow('#ffd2a0', 1.2), R.g, px, y + h * .62, zb + .14).rotation.x = PI / 2 });
+  add(new THREE.CylinderGeometry(.02, .02, .8, 4), gunM, R.g, cx, y + h - .4, 0); add(new THREE.SphereGeometry(.28, 10, 8), glow('#ffc070', 3), R.g, cx, y + h - .95, 0);
+  ROOMS.push(R); (DECO[def.deco] || (() => { }))(R); return R }
+// décors — tout est dessiné ici, de façon originale
+const box = (R, w, h, d, mat, x, y, z, trim) => add(new THREE.BoxGeometry(w, h, d), mat, R.g, R.cx + x, R.y + y + h / 2, R.zb + z, trim);
+const cyl = (R, rt, rb, h, mat, x, y, z, seg = 16) => add(new THREE.CylinderGeometry(rt, rb, h, seg), mat, R.g, R.cx + x, R.y + y + h / 2, R.zb + z);
+const screen = (R, w, h, x, y, z, f) => { const m = add(new THREE.PlaneGeometry(w, h), new THREE.MeshBasicMaterial({ map: canvasHi(Math.round(w * 90), Math.round(h * 90), f), toneMapped: false }), R.g, R.cx + x, R.y + y, R.zb + z); return m };
+const desk = (R, x, z, w = 3) => { box(R, w, .12, 1.3, darkWood, x, 1.05, z, true); [-1, 1].forEach(s => box(R, .14, 1.05, 1.1, darkWood, x + s * (w / 2 - .1), 0, z)) };
+const chair = (R, x, z, col = '#3a1d10') => { const m = new THREE.MeshStandardMaterial({ color: col, roughness: .6 }); box(R, .9, .12, .9, m, x, .7, z); box(R, .9, 1.1, .12, m, x, .8, z - .45); cyl(R, .06, .06, .7, gunM, x, 0, z) };
+const shelf = (R, x, z, w = 2.4, rows = 4, cols = ['#7a2a1a', '#2a4a7a', '#2a6a3a', '#8a6a2a', '#5a2a6a']) => { box(R, w, 4.2, .6, darkWood, x, 0, z); for (let r0 = 0; r0 < rows; r0++) { box(R, w - .1, .08, .55, goldM, x, .5 + r0 * 1, z + .05); for (let b = 0; b < Math.floor(w / .2) - 1; b++) box(R, .16, .75, .45, new THREE.MeshStandardMaterial({ color: cols[(b + r0) % cols.length], roughness: .7 }), x - w / 2 + .25 + b * .2, .58 + r0 * 1, z + .08) } };
+const barrel = (R, x, z, s = 1, y = 0) => { cyl(R, .5 * s, .5 * s, 1.2 * s, MM.barrel, x, y, z); [.15, .95].forEach(k => cyl(R, .52 * s, .52 * s, .08, gunM, x, y + k * 1.2 * s - .04, z)) };
+const crate = (R, x, z, s = 1, y = 0) => box(R, s, s, s, new THREE.MeshStandardMaterial({ map: deckT, color: '#b98a5a' }), x, y, z, true);
+const coins = (R, x, z, n = 5) => { for (let i = 0; i < n; i++) cyl(R, .45 - i * .07, .5 - i * .07, .16, goldM, x, i * .16, z, 20) };
+const ANIM = [];
+const DECO = {
+  cabine(R) { box(R, 2.2, 1.2, 1.4, new THREE.MeshStandardMaterial({ color: '#5a0a10', roughness: .5 }), -2.8, 0, 1.2); box(R, 2.2, 3.4, .4, new THREE.MeshStandardMaterial({ color: '#4a060a' }), -2.8, 0, .55, true); [-1, 1].forEach(s => box(R, .3, 1.6, 1.4, goldM, -2.8 + s * 1.15, 0, 1.2)); cyl(R, .35, .35, .3, goldM, -2.8, 3.4, .55);
+    screen(R, 4.2, 2.4, 1.6, 3.4, .12, (x, w, h) => { x.fillStyle = '#e8d3a8'; x.fillRect(0, 0, w, h); x.strokeStyle = '#7a4a1a'; x.lineWidth = 3; for (let i = 0; i < 9; i++) { x.beginPath(); x.ellipse(w * Math.random(), h * Math.random(), 18 + Math.random() * 40, 10 + Math.random() * 20, 0, 0, 7); x.stroke() } x.fillStyle = '#b3121a'; x.font = `700 ${h * .14}px Georgia`; x.textAlign = 'center'; x.fillText('ROUTE DE L\'ARMADA QDGZ', w / 2, h * .16); x.setLineDash([8, 6]); x.beginPath(); x.moveTo(w * .1, h * .8); x.bezierCurveTo(w * .3, h * .3, w * .6, h * .9, w * .9, h * .35); x.stroke() });
+    desk(R, 2, 2.6, 3.4); box(R, 1.6, .6, .9, new THREE.MeshStandardMaterial({ color: '#5a3416' }), 3.4, 0, 4.8, true); coins(R, 3.4, 4.8, 3); const ch = cyl(R, .9, .9, .08, goldM, 0, R.h - 1.6, 2.5, 24); },
+  conseil(R) { cyl(R, 3, 3, .2, darkWood, 0, 1.1, 3.4, 32); cyl(R, .6, .9, 1.1, darkWood, 0, 0, 3.4); for (let i = 0; i < 8; i++) { const a = i / 8 * PI * 2; chair(R, Math.cos(a) * 4, 3.4 + Math.sin(a) * 2.6, i === 0 ? '#6e0a10' : '#3a1d10') }
+    const glb = add(new THREE.IcosahedronGeometry(1.1, 2), new THREE.MeshBasicMaterial({ color: '#ff5a3a', wireframe: true, transparent: true, opacity: .8 }), R.g, R.cx, R.y + 2.8, R.zb + 3.4); ANIM.push(t => { glb.rotation.y = t * .6; glb.rotation.x = t * .2 });
+    [-1, 1].forEach(s => screen(R, 1.4, 3, s * 4, 2.9, .12, (x, w, h) => { x.fillStyle = '#120a0a'; x.fillRect(0, 0, w, h); x.drawImage(flagT.image, 0, h * .3, w, w * .62); x.fillStyle = '#d4a440'; x.fillRect(0, 0, w, 8); x.fillRect(0, h - 8, w, 8) })) },
+  cartes(R) { cyl(R, .25, .4, 1, darkWood, -2.6, 0, 2); const gb = add(new THREE.SphereGeometry(.9, 28, 20), new THREE.MeshStandardMaterial({ map: canvasHi(256, 128, (x, w, h) => { x.fillStyle = '#2c5a8a'; x.fillRect(0, 0, w, h); x.fillStyle = '#d9c08a'; for (let i = 0; i < 14; i++) { x.beginPath(); x.ellipse(Math.random() * w, Math.random() * h, 10 + Math.random() * 26, 6 + Math.random() * 14, Math.random(), 0, 7); x.fill() } }), roughness: .6 }), R.g, R.cx - 2.6, R.y + 2, R.zb + 2); ANIM.push(t => gb.rotation.y = t * .3);
+    add(new THREE.TorusGeometry(1.05, .04, 6, 40), goldM, R.g, R.cx - 2.6, R.y + 2, R.zb + 2);
+    desk(R, 1.6, 2.4, 3.6); screen(R, 3.2, 1.2, 1.6, 1.2, 2.4, (x, w, h) => { x.fillStyle = '#e8d3a8'; x.fillRect(0, 0, w, h); x.strokeStyle = '#2a4a7a'; x.lineWidth = 2; for (let i = 0; i < 12; i++) { x.beginPath(); x.moveTo(0, i * h / 12); x.lineTo(w, i * h / 12); x.stroke() } }).rotation.x = -PI / 2;
+    const ast = new THREE.Group(); ast.position.set(R.cx + 1.6, R.y + 2, R.zb + 2.4); R.g.add(ast); [0, 1, 2].forEach(i => { const ring = add(new THREE.TorusGeometry(.5 - i * .12, .03, 6, 30), goldM, ast); ring.rotation.set(i, i * .7, 0) }); ANIM.push(t => { ast.rotation.y = t; ast.children.forEach((c, i) => c.rotation.x += .01 * (i + 1)) });
+    screen(R, 3.6, 1.8, 2, 3.4, .12, (x, w, h) => { x.fillStyle = '#1d2a1d'; x.fillRect(0, 0, w, h); x.fillStyle = '#e6efe0'; x.font = `${h * .14}px Georgia`; ['Partiels de L3', 'BDD · Réseaux · Algo', 'Fiche + quiz chaque soir'].forEach((s, i) => x.fillText(s, w * .06, h * (.3 + i * .25))) }); shelf(R, -3.6, .5, 1.6) },
+  scribe(R) { desk(R, 0, 2.2, 3.4); for (let i = 0; i < 6; i++) cyl(R, .14, .14, .9, new THREE.MeshStandardMaterial({ color: '#efe4c8' }), -1.2 + (i % 3) * .3, 1.17 + Math.floor(i / 3) * .28, 2, 10).rotation.z = PI / 2;
+    cyl(R, .15, .2, .25, new THREE.MeshStandardMaterial({ color: '#111' }), 1, 1.17, 2.3); const q = add(new THREE.ConeGeometry(.06, 1, 6), new THREE.MeshStandardMaterial({ color: '#f2f2f2' }), R.g, R.cx + 1, R.y + 1.8, R.zb + 2.3); q.rotation.z = .4;
+    [-1.6, 1.6].forEach(x => { cyl(R, .07, .07, .4, new THREE.MeshStandardMaterial({ color: '#efe6cf' }), x, 1.17, 1.8); add(new THREE.SphereGeometry(.07, 8, 6), glow('#ffb347', 5), R.g, R.cx + x, R.y + 1.65, R.zb + 1.8) });
+    shelf(R, -3, .5, 2.6); shelf(R, 3, .5, 2.6, 4, ['#3a2a1a', '#5a3a1a', '#2a3a2a']); screen(R, 2, 1.2, 0, 3.6, .12, (x, w, h) => { x.fillStyle = '#efe4c8'; x.fillRect(0, 0, w, h); x.fillStyle = '#1a1a1a'; x.font = `italic ${h * .2}px Georgia`; x.textAlign = 'center'; x.fillText('Les mots qui vendent', w / 2, h * .55) }) },
+  vigie(R) { const tl = new THREE.Group(); tl.position.set(R.cx, R.y + 2.2, R.zb + 3.2); R.g.add(tl); add(new THREE.CylinderGeometry(.22, .4, 4.4, 16), brassM, tl).rotation.x = PI / 2.2; add(new THREE.TorusGeometry(.42, .05, 6, 20), goldM, tl, 0, -.2, -1.9); cyl(R, .08, .3, 2.2, darkWood, 0, 0, 3.2);
+    ANIM.push(t => tl.rotation.y = Math.sin(t * .3) * .6);
+    const rad = screen(R, 2, 2, -2.8, 3.2, .12, (x, w, h) => { x.fillStyle = '#021a0c'; x.fillRect(0, 0, w, h); x.strokeStyle = '#2aff8a'; x.lineWidth = 2; [.15, .3, .45].forEach(k => { x.beginPath(); x.arc(w / 2, h / 2, w * k, 0, 7); x.stroke() }); x.fillStyle = '#ffd740'; [[.3, .4], [.7, .3], [.6, .7], [.35, .7]].forEach(([a, b]) => { x.beginPath(); x.arc(w * a, h * b, 5, 0, 7); x.fill() }) });
+    const sw = add(new THREE.PlaneGeometry(.9, .04), new THREE.MeshBasicMaterial({ color: '#2aff8a', toneMapped: false }), R.g, R.cx - 2.8, R.y + 3.2, R.zb + .14); sw.geometry.translate(.45, 0, 0); ANIM.push(t => sw.rotation.z = -t * 2);
+    screen(R, 3, 1.8, 2.4, 3.2, .12, (x, w, h) => { x.fillStyle = '#e8d3a8'; x.fillRect(0, 0, w, h); x.fillStyle = '#7a4a1a'; x.font = `700 ${h * .13}px Georgia`; x.fillText('Offres d\'alternance', w * .06, h * .2); x.fillStyle = '#b3121a'; for (let i = 0; i < 7; i++) { x.beginPath(); x.arc(w * (.15 + Math.random() * .7), h * (.35 + Math.random() * .55), 6, 0, 7); x.fill() } }) },
+  studio(R) { const cm = new THREE.Group(); cm.position.set(R.cx + 1.8, R.y, R.zb + 4); R.g.add(cm); [0, 2.1, 4.2].forEach(a => { const l = add(new THREE.CylinderGeometry(.04, .04, 2, 6), gunM, cm, Math.sin(a) * .35, 1, Math.cos(a) * .35); l.rotation.set(Math.cos(a) * .2, 0, -Math.sin(a) * .2) });
+    add(new THREE.BoxGeometry(.7, .55, .9), gunM, cm, 0, 2.2, 0); add(new THREE.CylinderGeometry(.22, .26, .5, 16), new THREE.MeshStandardMaterial({ color: '#111', metalness: .8 }), cm, 0, 2.2, -.65).rotation.x = PI / 2; const rec = add(new THREE.SphereGeometry(.07, 8, 6), glow('#ff0000', 6), cm, .25, 2.55, .2); ANIM.push(t => rec.visible = Math.sin(t * 4) > 0);
+    [-3.4, 3.4].forEach(x => { cyl(R, .05, .05, 2.6, gunM, x, 0, 2); const b = box(R, 1.1, .9, .4, gunM, x, 2.5, 2); add(new THREE.PlaneGeometry(.95, .75), glow('#fff4e0', 3), b, 0, 0, .21) });
+    screen(R, 4.6, 2.6, 0, 3, .12, (x, w, h) => { const g = x.createLinearGradient(0, 0, w, h); g.addColorStop(0, '#2a0a1a'); g.addColorStop(1, '#0a0a2a'); x.fillStyle = g; x.fillRect(0, 0, w, h); x.fillStyle = '#ff4081'; x.beginPath(); x.moveTo(w * .44, h * .32); x.lineTo(w * .6, h * .5); x.lineTo(w * .44, h * .68); x.fill(); x.fillStyle = '#fff'; x.font = `700 ${h * .1}px Georgia`; x.textAlign = 'center'; x.fillText('GITHISTORY', w / 2, h * .2) });
+    for (let i = 0; i < 3; i++) cyl(R, .45, .45, .1, new THREE.MeshStandardMaterial({ color: '#111' }), -3.6, .4 + i * .12, 4.6, 20) },
+  montage(R) { desk(R, 0, 2, 4); [-1.3, 0, 1.3].forEach((x, i) => { box(R, .9, 1.6, .08, gunM, x, 1.2, 1.6); screen(R, .8, 1.45, x, 2, 1.66, (c, w, h) => { c.fillStyle = ['#2a0a00', '#001a2a', '#1a1a00'][i]; c.fillRect(0, 0, w, h); c.fillStyle = '#ff9100'; c.beginPath(); c.moveTo(w * .38, h * .4); c.lineTo(w * .65, h * .5); c.lineTo(w * .38, h * .6); c.fill(); c.fillRect(w * .1, h * .88, w * .8 * (i + 1) / 3, 4) }) });
+    const hr = add(new THREE.ConeGeometry(.5, 2.4, 20, 1, true), goldM, R.g, R.cx + 3.4, R.y + 3.6, R.zb + .6); hr.rotation.z = PI / 2.4; [-3.6, 3.6].forEach(x => box(R, .8, 1.6, .7, gunM, x, 0, 1.2));
+    screen(R, 2.4, .7, -1.6, 4.3, .12, (x, w, h) => { x.fillStyle = '#1a0a00'; x.fillRect(0, 0, w, h); x.fillStyle = '#ff9100'; x.font = `700 ${h * .45}px Georgia`; x.textAlign = 'center'; x.fillText('ÉPISODE SUIVANT', w / 2, h * .65) }) },
+  archives(R) { [-3.4, -1, 1.4, 3.6].forEach(x => shelf(R, x, .5, 2.2, 4, ['#4a2a6a', '#2a2a5a', '#5a3a7a', '#3a1a4a'])); cyl(R, .5, .7, 1.2, darkWood, 0, 0, 3.6);
+    const cr = add(new THREE.OctahedronGeometry(.8, 0), new THREE.MeshStandardMaterial({ color: '#1a0a2a', emissive: '#7c3aed', emissiveIntensity: 2.2, metalness: .3, roughness: .1 }), R.g, R.cx, R.y + 2.4, R.zb + 3.6); ANIM.push(t => { cr.rotation.y = t; cr.position.y = R.y + 2.4 + Math.sin(t * 2) * .15 });
+    const pl = new THREE.PointLight('#a78bfa', 18, 9, 1.5); pl.position.set(R.cx, R.y + 2.6, R.zb + 3.6); GR.add(pl) },
+  tresor(R) { const v = new THREE.Group(); v.position.set(R.cx - 2.6, R.y + 2.2, R.zb + .3); R.g.add(v); add(new THREE.CylinderGeometry(1.6, 1.6, .4, 32), steel, v).rotation.x = PI / 2; const wh = add(new THREE.TorusGeometry(.7, .08, 8, 24), goldM, v, 0, 0, .3); ANIM.push(t => wh.rotation.z = t * .5);
+    [[1.2, 2.2], [2.6, 3.4], [.2, 4], [3.6, 1.6]].forEach(([x, z], i) => coins(R, x, z, 4 + i)); box(R, 1.8, .9, 1.1, new THREE.MeshStandardMaterial({ color: '#5a3416' }), 2.4, 0, 1, true); box(R, 1.8, .1, 1.1, goldM, 2.4, .9, 1);
+    for (let i = 0; i < 3; i++) for (let k = 0; k < 3 - i; k++) box(R, .7, .25, .35, goldM, -1.2 + k * .72 + i * .36, i * .25, 3.6) },
+  comptoir(R) { box(R, 4.2, 1.2, 1.1, darkWood, 0, 0, 3.4, true); box(R, 4.3, .1, 1.2, goldM, 0, 1.2, 3.4); [-3, 3].forEach(x => { box(R, 2, 4, .5, darkWood, x, 0, .5); for (let i = 0; i < 4; i++) for (let k = 0; k < 3; k++) crate(R, x - .6 + k * .6, .7, .5, .1 + i * 1) });
+    cyl(R, .04, .04, .9, goldM, 1.4, 1.3, 3.4); box(R, 1.2, .05, .05, goldM, 1.4, 2.2, 3.4); [.8, 2].forEach(x => cyl(R, .25, .25, .05, goldM, x, 1.8, 3.4));
+    screen(R, 2.6, 1, 0, 4.2, .12, (x, w, h) => { x.fillStyle = '#120a1a'; x.fillRect(0, 0, w, h); x.fillStyle = '#b388ff'; x.font = `700 ${h * .4}px Georgia`; x.textAlign = 'center'; x.fillText('BOUTIQUE PAYHIP', w / 2, h * .62) }) },
+  machines(R) { const gears = []; [[-4, 2.6, 1.6], [-1.6, 3.4, 1.1], [.5, 2.4, 1.4]].forEach(([x, y, s], i) => { const gg = new THREE.Group(); gg.position.set(R.cx + x, R.y + y, R.zb + .6); R.g.add(gg); add(new THREE.CylinderGeometry(s, s, .3, 24), brassM, gg).rotation.x = PI / 2; for (let k = 0; k < 12; k++) { const a = k / 12 * PI * 2; add(new THREE.BoxGeometry(.3, .3, .3), brassM, gg, Math.cos(a) * (s + .1), Math.sin(a) * (s + .1), 0).rotation.z = a } add(new THREE.CylinderGeometry(.25, .25, .4, 12), gunM, gg).rotation.x = PI / 2; gears.push([gg, i % 2 ? -1 : 1]) });
+    ANIM.push(t => gears.forEach(([g, s], i) => g.rotation.z = s * t * (.8 + i * .3)));
+    box(R, 3, 3.2, 2.4, gunM, 4.6, 0, 1.6, true); const fire = box(R, 1.6, 1.2, .1, glow('#ff6a1a', 4), 4.6, .6, 2.85); ANIM.push(t => fire.material.emissiveIntensity = 3.5 + Math.sin(t * 9) * 1.2);
+    const fl = new THREE.PointLight('#ff7a2a', 35, 12, 1.5); fl.position.set(R.cx + 4.6, R.y + 1.5, R.zb + 3.6); GR.add(fl);
+    [-6.5, -5.5].forEach((x, i) => { cyl(R, .35, .35, 3, steel, x, 0, 2.8); const p = cyl(R, .25, .25, 1.6, brassM, x, 3, 2.8); ANIM.push(t => p.position.y = R.y + 3.8 + Math.sin(t * 4 + i * PI) * .6) });
+    for (let i = 0; i < 4; i++) cyl(R, .18, .18, 8, brassM, -2 + i * .5, 0, .35).rotation.z = PI / 2 * (i % 2);
+    screen(R, 2.6, .9, 4.6, 4.4, .12, (x, w, h) => { x.fillStyle = '#1a0a00'; x.fillRect(0, 0, w, h); x.fillStyle = '#ff7a2a'; x.font = `700 ${h * .5}px Georgia`; x.textAlign = 'center'; x.fillText('MOTEUR N8N', w / 2, h * .68) }) },
+  armurerie(R) { [-3, 0, 3].forEach(x => { box(R, 2.2, 3, .3, darkWood, x, .6, .3); for (let i = 0; i < 4; i++) { const c = cutlass(R.g, R.cx + x - .75 + i * .5, R.y + 1.4, R.zb + .55); c.rotation.z = .08 } });
+    for (let i = 0; i < 3; i++) for (let k = 0; k < 3 - i; k++) add(new THREE.SphereGeometry(.3, 12, 10), gunM, R.g, R.cx - 2 + k * .62 + i * .31, R.y + .3 + i * .5, R.zb + 3.6);
+    const cn = add(new THREE.CylinderGeometry(.35, .5, 3, 16), gunM, R.g, R.cx + 2, R.y + .9, R.zb + 3.4); cn.rotation.z = PI / 2.2; box(R, 1.6, .6, 1.2, darkWood, 2, 0, 3.4) },
+  cambuse(R) { box(R, 2.6, 1.6, 1.2, gunM, -2.6, 0, .9, true); const fire = box(R, 1.6, .4, .1, glow('#ff6a1a', 4), -2.6, .4, 1.55); ANIM.push(t => fire.material.emissiveIntensity = 3 + Math.sin(t * 11) * 1);
+    cyl(R, .45, .4, .6, gunM, -2.6, 1.6, .9); desk(R, 1.4, 3, 3.6); for (let i = 0; i < 4; i++) cyl(R, .12, .1, .3, new THREE.MeshStandardMaterial({ color: '#7a5a3a' }), .2 + i * .8, 1.17, 3); barrel(R, 3.8, 1.2); barrel(R, 3.2, .9, .8, 1.2) },
+  atelier(R) { cyl(R, 1.3, 1.4, .25, steel, -1.2, 0, 2.6, 32); const bp = pirate('#38bdf8', false); bp.g.position.set(R.cx - 1.2, R.y + .25, R.zb + 2.6); bp.g.scale.setScalar(1.3); bp.g.rotation.y = .4; R.g.add(bp.g);
+    const rings = [0, 1, 2].map(i => { const ri = add(new THREE.TorusGeometry(1.15, .03, 6, 40), glow('#38bdf8', 3), R.g, R.cx - 1.2, R.y + .6, R.zb + 2.6); ri.rotation.x = PI / 2; return ri }); ANIM.push(t => rings.forEach((ri, i) => ri.position.y = R.y + .5 + ((t * .6 + i / 3) % 1) * 3));
+    const arm = new THREE.Group(); arm.position.set(R.cx + 1.6, R.y + R.h - .3, R.zb + 2.6); R.g.add(arm); add(new THREE.CylinderGeometry(.12, .12, 1.6, 10), brassM, arm, 0, -.8, 0); const a2 = add(new THREE.CylinderGeometry(.09, .09, 1.4, 10), brassM, arm, -.5, -1.8, 0); a2.rotation.z = -.8; add(new THREE.SphereGeometry(.12, 8, 6), glow('#ffd27a', 5), arm, -1, -2.3, 0); ANIM.push(t => arm.rotation.y = Math.sin(t) * .6);
+    desk(R, 2.2, .9, 2.6); for (let i = 0; i < 4; i++) box(R, .25, .25, .25, steel, 1.4 + i * .5, 1.17, .9);
+    screen(R, 2.6, 1.6, -2.2, 3.6, .12, (x, w, h) => { x.fillStyle = '#0a2a4a'; x.fillRect(0, 0, w, h); x.strokeStyle = '#9fd8ff'; x.lineWidth = 2; x.strokeRect(w * .35, h * .2, w * .3, h * .3); x.strokeRect(w * .3, h * .52, w * .4, h * .36); x.fillStyle = '#e6f6ff'; x.font = `700 ${h * .12}px Georgia`; x.textAlign = 'center'; x.fillText('PLAN : NOUVEL AGENT', w / 2, h * .14) }) },
+  infirmerie(R) { box(R, 3, .9, 1.4, steel, -.6, 0, 2.6, true); const pt = matelot(); pt.g.position.set(R.cx - .6, R.y + 1.2, R.zb + 2.6); pt.g.rotation.set(0, 0, PI / 2); pt.g.scale.setScalar(1.4); R.g.add(pt.g);
+    screen(R, 1.8, 1.1, 2, 2.9, .12, (x, w, h) => { x.fillStyle = '#021208'; x.fillRect(0, 0, w, h); x.strokeStyle = '#4ade80'; x.lineWidth = 3; x.beginPath(); for (let i = 0; i <= w; i += 4) x.lineTo(i, h * .55 - (i % 60 > 40 && i % 60 < 48 ? h * .35 : 0)); x.stroke(); x.fillStyle = '#4ade80'; x.font = `700 ${h * .16}px monospace`; x.fillText('DEBUG OK', w * .06, h * .2) });
+    box(R, 1.4, 3.4, .6, darkWood, -3.4, 0, .5); for (let i = 0; i < 3; i++) for (let k = 0; k < 3; k++) cyl(R, .12, .12, .4, glow(['#4ade80', '#38bdf8', '#f472b6'][k], 1.5), -3.8 + k * .4, .6 + i * 1, .65, 10);
+    const wr = new THREE.Group(); wr.position.set(R.cx - .6, R.y + 3.8, R.zb + 2.6); R.g.add(wr); add(new THREE.BoxGeometry(.15, .9, .15), steel, wr); add(new THREE.BoxGeometry(.5, .12, .12), steel, wr, 0, -.5, 0); ANIM.push(t => wr.rotation.z = Math.sin(t * 3) * .4) },
+  soute(R) { for (let i = 0; i < 5; i++) barrel(R, -4 + i * 1.2, 1, 1); for (let i = 0; i < 4; i++) barrel(R, -3.4 + i * 1.2, 1, 1, 1.25); [[1.8, 2.6], [3, 2.6], [2.4, 3.8], [1.8, 2.6, 1], [3.6, 1]].forEach(([x, z, y = 0]) => crate(R, x, z, 1.1, y * 1.1));
+    const rp = add(new THREE.TorusGeometry(.6, .18, 8, 24), new THREE.MeshStandardMaterial({ color: '#b08a5a', roughness: .9 }), R.g, R.cx - 1, R.y + .2, R.zb + 4); rp.rotation.x = PI / 2 },
+};
+Object.entries(LAYOUT).forEach(([lv, list]) => list.forEach(([id, x1, x2]) => {
+  const a = AGENTS.find(q => q.code === id), s = SALLES.find(q => q.id === id), def = a || s;
+  const R = room(def, x1, x2, +lv);
+  const plate = tag(`${a ? '<i></i>' : ''}<b>${(a ? a.piece : s.nom).toUpperCase()}</b>${a ? `<small>${a.fonction} · ${a.code}</small>` : ''}`, def.couleur, GR, new V(R.cx, R.y + R.h - .15, R.zf + .2), 'plate'); plate.onclick = () => a ? select(AG.find(q => q.d === a)) : selectRoom(R);
+  if (a) { const b = pirate(a.couleur, false); b.g.position.set(R.cx + (a.deco === 'vigie' ? -1.2 : 0), R.y, R.zb + (a.deco === 'montage' || a.deco === 'scribe' || a.deco === 'cartes' ? 3.4 : 2.6)); b.g.scale.setScalar(1.55); b.g.rotation.y = .25; GR.add(b.g);
+    const ag = { d: a, bot: b, R, plate, statut: 'pause', phase: rand(0, 6), home: b.g.position.clone(), face: b.g.rotation.y, wait: rand(.5, 4) }; b.g.traverse(o => { if (o.isMesh) { o.userData.agent = ag; pick.push(o) } });
+    gear(b, a.deco, a.couleur); ag.tag = tag(`<i></i><b>${a.fonction}</b> · ${a.code}<small>…</small>`, a.couleur, b.g, new V(0, 2.75, 0)); ag.tag.onclick = () => select(ag); LBL[LBL.length - 1].far = 80; LBL[LBL.length - 1].cut = true; AG.push(ag) }
+  R.g.traverse(o => { if (o.isMesh && !o.userData.agent) o.userData.room = R; if (o.isMesh) pick.push(o) });
+}));
+gear(ULT, 'capitaine'); const AU = { d: CAPITAINE, bot: ULT, R: null, statut: 'pause', phase: 0, wheel, home: ULT.g.position.clone(), face: ULT.g.rotation.y, wait: 3 }; ULT.g.traverse(o => { if (o.isMesh) { o.userData.agent = AU; pick.push(o) } });
+AU.tag = tag(`<i></i><b>Capitaine</b> · ULTRON<small>…</small>`, '#ff2a2a', ULT.g, new V(0, 3.2, 0)); AU.tag.onclick = () => select(AU); AG.unshift(AU);
+// matelots dans les coursives (devant les salles) et dans la cale
+[[1, -30, 20], [2, -30, 20], [3, -29, 17]].forEach(([lv, x1, x2]) => crewOn(lv === 3 ? 5 : 4, LV[lv].y, x1, x2, x => hb(x, LV[lv].y) - rand(1.2, 2.4)));
+// échelles entre les étages
+[[-30.5, 1], [-30.5, 2], [19.5, 1], [16.5, 2]].forEach(([x, lv]) => { const y = LV[lv].y - 6, z = hb(x, y + 6) - 1; [-.45, .45].forEach(dz => add(new THREE.BoxGeometry(.12, 6, .12), darkWood, GR, x, y + 3, z + dz)); for (let i = 0; i < 10; i++) add(new THREE.BoxGeometry(.1, .08, .9), darkWood, GR, x, y + .4 + i * .58, z) });
+// halo sous le galion
+const hov = new THREE.Sprite(new THREE.SpriteMaterial({ map: softT, color: '#ffd28a', transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, opacity: .45 })); hov.scale.set(90, 18, 1); hov.position.y = -3; GR.add(hov); G.hov = hov;
+
+/* ---------- 3 navires d'escorte ---------- */
+const ESC = [];
+function escort(pos, col, nom) { const s = { root: new THREE.Group(), base: pos.clone(), phase: rand(0, 6), sails: [], wings: [], flames: [], exhaust: [], crew: [], big: false }; s.root.position.copy(pos); scene.add(s.root);
+  const hl = hull(14, 4.4, 3, false); s.root.add(hl.g); const dk = hl.dk, emb = (x, w, h) => { x.drawImage(flagT.image, w * .15, h * .3, w * .7, h * .44) };
+  mast(s, 1.5, 13, [[5, 6.2, 4.4], [9.4, 4.6, 3]], [sailTex(col, emb), sailTex(col)], dk, hl.B); mast(s, -3.6, 9, [[4.6, 4, 2.8]], [sailTex(col)], hl.poopY, hl.B);
+  flag(s.root, 1.5, dk + 13.5, 2.4, 1.5, flagT); add(new THREE.CylinderGeometry(.08, .12, 5, 8), darkWood, s.root, 9, dk + 1.2, 0).rotation.z = -1.22;
+  [-1, 1].forEach(k => wingSail(s, -.5, hl.H * .55, k * (hl.B / 2 + .1), k, 6, col)); thruster(s, -7.6, hl.H * .45, 0, .6, col);
+  const w = new THREE.Group(); w.position.set(-3.8, hl.poopY + 1, 0); w.rotation.y = PI / 2; s.root.add(w); add(new THREE.TorusGeometry(.45, .05, 8, 24), darkWood, w); s.wheel = w;
+  const b = pirate(col, false); b.g.position.set(-4.8, hl.poopY, 0); b.g.rotation.y = PI / 2; b.g.scale.setScalar(1.25); s.root.add(b.g); s.bot = b;
+  for (let i = 0; i < 5; i++) { const m = matelot(); m.g.scale.setScalar(.95); m.g.position.set(rand(-1.5, 6), dk, rand(-1.4, 1.4)); s.root.add(m.g); s.crew.push({ ...m, tg: null, t: rand(0, 3), task: 'idle', xs: [-1.5, 6], zf: () => rand(-1.4, 1.4), ph: rand(0, 6) }) }
+  s.root.scale.setScalar(3.2); tag(`<b>${nom}</b><small>navire d'escorte</small>`, col, s.root, new V(0, 17, 0)); ESC.push(s); return s }
+GR.traverse(o => { if (o.isPointLight) { o.distance *= GS; o.intensity *= GS ** o.decay } });
+// sécurité : aucune normale invalide (sinon taches noires avec le bloom)
+scene.traverse(o => { const n = o.isMesh && o.geometry.attributes.normal; if (!n) return; const A = n.array; for (let i = 0; i < A.length; i += 3) if (!(Number.isFinite(A[i]) && Number.isFinite(A[i + 1]) && Number.isFinite(A[i + 2])) || A[i] * A[i] + A[i + 1] * A[i + 1] + A[i + 2] * A[i + 2] < 1e-8) { A[i] = 0; A[i + 1] = 1; A[i + 2] = 0 } });
+escort(new V(-150, 66, -135), '#d4a440', 'L\'Éclaireur'); escort(new V(115, 36, -165), '#c0392b', 'Le Brise-Lame'); escort(new V(240, 80, -60), '#2ec4b6', 'Le Corsaire');
+[[1, 'ÉTAGE 1 · SOUS LE PONT'], [2, 'ÉTAGE 2 · ENTREPONT'], [3, 'ÉTAGE 3 · LA CALE']].forEach(([lv, t]) => tag(`<b>${t}</b>`, '#d4a440', GR, new V(XS - 2, LV[lv].y + 3.4, BH - 1), 'plate lvl'));
+
+/* =====================================================================
+   6. STATUTS EN DIRECT (N8N lit ton coffre Obsidian)
+   ===================================================================== */
+let online = false, counts = {}, MISS = [], ERRS = [], NLIV = 0, seenValid = null;
+const parle = t => { if (!VOIX || !('speechSynthesis' in window)) return; try { const u = new SpeechSynthesisUtterance(t); u.lang = 'fr-FR'; u.rate = .95; u.pitch = .7; speechSynthesis.cancel(); speechSynthesis.speak(u) } catch (e) { } };
+async function poll() {
+  try { const res = await fetch(`${N8N}/webhook/qdgz-statut`, { cache: 'no-store' }); const j = await res.json(); const L = Array.isArray(j) ? j : (j.missions || []); counts = {}; MISS = L; ERRS = j.erreurs || []; NLIV = j.livrables || 0;
+    L.forEach(m => { const c = counts[m.agent] || (counts[m.agent] = { a_faire: 0, en_cours: 0, a_valider: 0, valide: 0 }); if (c[m.statut] != null) c[m.statut]++ }); online = true
+    const nowValid = new Set(L.filter(m => m.statut === 'a_valider').map(m => m.file));
+    if (seenValid) nowValid.forEach(f => { if (!seenValid.has(f)) { const m = L.find(x => x.file === f), a = AGENTS.find(q => q.code === m.agent); log(`✅ ${m.agent} a terminé : ${m.sujet}`); parle(`Capitaine, ${a ? 'le ' + a.fonction.toLowerCase() : m.agent} a terminé sa mission : ${m.sujet}. Le livrable attend ta validation.`) } });
+    seenValid = nowValid;
+    const T = L.reduce((o, m) => (o[m.statut] = (o[m.statut] || 0) + 1, o), {}); $('#cnt').textContent = `📜 ${T.a_faire || 0} à faire · ${T.en_cours || 0} en cours · ${T.a_valider || 0} à valider`; $('#cnt').style.color = T.a_valider ? '#ffd27a' : '';
+  } catch (e) { online = false; $('#cnt').textContent = '📜 —' }
+  $('#n8n').textContent = online ? '● N8N en ligne' : '○ N8N hors ligne'; $('#n8n').style.color = online ? '#7CFC9A' : '#ffb0b8';
+  if (sel && sel.def && sel.def.id === 'infirmerie') fillPanel();
+  AG.forEach(s => { const c = counts[s.d.code] || {}; s.statut = c.en_cours ? 'travail' : c.a_valider ? 'attente' : c.a_faire ? 'en ligne' : 'pause'; const st = STATUTS[s.statut];
+    s.tag.style.setProperty('--s', st.couleur); if (s.plate) { s.plate.style.setProperty('--s', st.couleur); s.plate.title = st.texte } s.tag.querySelector('small').textContent = st.texte + (c.a_valider ? ` · ${c.a_valider} à valider` : ''); if (sel === s) fillPanel() });
+}
+poll(); setInterval(poll, 30000);
+
+/* =====================================================================
+   7. PANNEAU, CAMÉRA, ENVOI DE MISSIONS
+   ===================================================================== */
+let sel = null, tgt = null, fly = null;
+function log(t) { const d = document.createElement('div'); d.textContent = t; $('#log').prepend(d); while ($('#log').children.length > 4) $('#log').lastChild.remove() }
+function fillPanel() { const s = sel; if (!s) return;
+  if (s.R !== undefined || s === AU) { $('#pT').textContent = s === AU ? 'La Passerelle' : s.d.piece; $('#pS').textContent = `${s.d.fonction} · ${s.d.code}`; $('#pRk').textContent = 'Rôle à bord'; $('#pR').textContent = s.d.role }
+  else { $('#pT').textContent = s.def.nom; $('#pS').textContent = ['', 'Étage 1 · sous le pont', 'Étage 2 · entrepont', 'Étage 3 · la cale'][s.lv]; $('#pRk').textContent = 'À quoi sert cette salle'; $('#pR').textContent = s.def.info }
+  $('#pAg').style.display = tgt ? '' : 'none'; $('#pTalkRow').style.display = tgt === AU ? '' : 'none'; if (tgt !== AU) $('#pRep').style.display = 'none';
+  if (tgt) { const c = counts[tgt.d.code] || {}; $('#pSt').innerHTML = `<b style="color:${STATUTS[tgt.statut].couleur}">● ${tgt.d.code} : ${STATUTS[tgt.statut].texte}</b> · à faire ${c.a_faire || 0} · en cours ${c.en_cours || 0} · à valider ${c.a_valider || 0}${online ? '' : '<br><small>N8N hors ligne : lance LANCER-N8N.bat sur ton PC</small>'}`;
+    const q = (tgt === AU ? 'ULTRON : ' : `ULTRON, confie à ${tgt.d.code} : `) + ($('#pI').value || '…'); $('#pCl').href = 'claude://claude.ai/new?q=' + encodeURIComponent(q) }
+  $('#pMis').innerHTML = ''; $('#pRunRow').style.display = tgt === AU ? '' : 'none';
+  if (tgt) { const L = MISS.filter(m => tgt === AU ? true : m.agent === tgt.d.code).filter(m => m.statut !== 'valide').slice(0, tgt === AU ? 8 : 6); if (L.length) $('#pMis').innerHTML = '<div class="k">Missions</div>' + L.map(m => mRow(m)).join('') }
+  if (sel && sel.def && sel.def.id === 'infirmerie') $('#pR').innerHTML = sel.def.info + '<div class="k">Dernières erreurs des automatisations</div>' + (ERRS.length ? ERRS.map(e => `<div class="m" style="--s:#ef4444"><span title="${e.texte.replace(/"/g, '&quot;')}">${e.date} · ${e.texte}</span></div>`).join('') : `<div class="m" style="--s:#22c55e"><span>Aucune erreur récente ✔</span></div>`);
+  if (sel && sel.def && sel.def.id === 'soute') $('#pR').innerHTML = sel.def.info + `<div class="k">${NLIV} livrable${NLIV > 1 ? 's' : ''} dans la soute</div>`;
+  $('#pN8').href = N8N }
+const STC = { a_faire: '#8b5cf6', en_cours: '#22c55e', a_valider: '#ef4444', valide: '#64748b' }, STT = { a_faire: 'à faire', en_cours: 'en cours', a_valider: 'à valider', valide: 'validé' };
+function mRow(m) { const ob = 'obsidian://open?vault=ULTRON-Vault&file=' + encodeURIComponent('Missions/' + m.file.replace(/\.md$/, ''));
+  const lv = m.livrable ? `<a href="obsidian://open?vault=ULTRON-Vault&file=${encodeURIComponent(m.livrable.replace(/^\/+/, '').replace(/\.md$/, ''))}" title="Ouvrir le livrable">📦</a>` : '';
+  const act = m.statut === 'a_valider' ? `<button onclick="window.__val('${m.file.replace(/'/g, "\\'")}','valide')" title="Valider">✅</button><button onclick="window.__val('${m.file.replace(/'/g, "\\'")}','a_faire',1)" title="Refaire avec un commentaire">🔁</button>` : '';
+  return `<div class="m" style="--s:${STC[m.statut] || '#888'}"><span title="${m.file}"><b>${STT[m.statut] || m.statut}</b> · ${m.sujet}${sel === AU ? ' <small>(' + m.agent + ')</small>' : ''}</span>${lv}${act}<a href="${ob}" title="Ouvrir la mission dans Obsidian">📓</a></div>` }
+window.__val = async (file, statut, ask) => { let note = ''; if (ask) { note = prompt('Que faut-il refaire ou corriger ?') || ''; if (!note) return }
+  try { const j = await (await fetch(`${N8N}/webhook/qdgz-valider?` + new URLSearchParams({ file, statut, note }))).json(); if (j.ok) { log(statut === 'valide' ? `✅ Mission validée : ${file}` : `🔁 Mission renvoyée à l'agent`); parle(statut === 'valide' ? 'Mission validée, capitaine.' : 'Bien reçu, la mission repart.'); poll() } else log('⚠ ' + (j.err || 'refus')) } catch (e) { log('⚠ N8N injoignable') } };
+$('#pRun').onclick = async () => { try { await fetch(`${N8N}/webhook/qdgz-lancer`, { mode: 'no-cors' }); log('⚡ ULTRON part traiter les missions « à faire » (quelques minutes)'); parle('À vos ordres. Je traite les missions.'); AU.statut = 'travail'; setTimeout(poll, 20000) } catch (e) { log('⚠ N8N injoignable') } };
+const W = v => GR.localToWorld(v), view = (R) => ({ pos: W(new V(R.cx + 3, R.y + 5, R.zf + 15)), tg: W(new V(R.cx, R.y + 2.4, R.zb + 2.5)) });
+function select(a) { sel = a; tgt = a; $('#panel').style.display = 'block'; fillPanel(); fly = a === AU ? { pos: W(new V(-10, 31, 20)), tg: W(new V(-24, 25, 0)) } : view(a.R) }
+function selectRoom(R) { sel = R; tgt = R.def.id === 'conseil' ? AU : null; $('#panel').style.display = 'block'; fillPanel(); fly = view(R) }
+$('#x').onclick = () => { sel = tgt = null; $('#panel').style.display = 'none' };
+$('#pI').oninput = fillPanel;
+$('#pGo').onclick = async () => { if (!tgt) return; const txt = $('#pI').value.trim(); if (!txt) return $('#pI').focus();
+  const u = `${N8N}/webhook/qdgz-mission?` + new URLSearchParams({ agent: tgt.d.code, sujet: txt.slice(0, 40), consigne: txt, source: 'qg-qdgz' });
+  try { await fetch(u, { mode: 'no-cors' }); log(`📜 Ordre transmis à ${tgt.d.code} (${tgt.d.fonction.toLowerCase()})`); $('#pI').value = ''; setTimeout(poll, 4000) } catch (e) { log('⚠ N8N injoignable : lance LANCER-N8N.bat') } };
+let ollama = false;
+async function pollOllama() { try { const j = await (await fetch(`${OLL}/api/tags`, { cache: 'no-store' })).json(); const m = (j.models || []).map(x => x.name); ollama = m.some(n => n.startsWith('qwen2.5'));
+    $('#oll').textContent = ollama ? '● Ollama prêt' : '◐ Ollama : modèle en téléchargement'; $('#oll').style.color = ollama ? '#7CFC9A' : '#ffd27a' } catch (e) { ollama = false; $('#oll').textContent = '○ Ollama hors ligne'; $('#oll').style.color = '#ffb0b8' } }
+pollOllama(); setInterval(pollOllama, 30000);
+$('#bCfg').onclick = () => { $('#cN8').value = LS('qdgz.n8n'); $('#cOl').value = LS('qdgz.ollama'); $('#cVx').checked = VOIX; $('#cLo').checked = LEGER; $('#cRes').textContent = ''; $('#cfg').style.display = 'block' };
+$('#cx').onclick = () => $('#cfg').style.display = 'none';
+$('#cOk').onclick = () => { LSset('qdgz.n8n', clean($('#cN8').value)); LSset('qdgz.ollama', clean($('#cOl').value)); LSset('qdgz.voix', $('#cVx').checked ? '1' : '0'); const lo = $('#cLo').checked ? '1' : '0', reload = lo !== (LEGER ? '1' : '0'); LSset('qdgz.leger', lo);
+  N8N = clean($('#cN8').value) || `http://${HOTE}:5678`; OLL = clean($('#cOl').value) || `http://${HOTE}:11434`; VOIX = $('#cVx').checked; if (VOIX) parle('Voix activée, capitaine.'); $('#cfg').style.display = 'none'; log('⚙ Réglages enregistrés'); poll(); pollOllama(); if (reload) location.reload() };
+$('#cTest').onclick = async () => { const n = clean($('#cN8').value) || `http://${HOTE}:5678`, o = clean($('#cOl').value) || `http://${HOTE}:11434`; let a = '…', b = '…'; $('#cRes').textContent = 'Test…';
+  try { const j = await (await fetch(`${n}/webhook/qdgz-statut`, { cache: 'no-store' })).json(); a = `N8N ✔ (${(j.missions || []).length} missions)` } catch (e) { a = 'N8N ✖ (lance LANCER-TOUT.bat, ou vérifie l\'adresse)' }
+  try { const j = await (await fetch(`${o}/api/tags`)).json(); b = (j.models || []).some(m => m.name.startsWith('qwen2.5')) ? 'Ollama ✔ modèle prêt' : 'Ollama ✔ mais modèle en téléchargement' } catch (e) { b = 'Ollama ✖' }
+  $('#cRes').textContent = a + ' · ' + b };
+const say = t => { $('#pRep').style.display = 'block'; $('#pRep').textContent = t };
+$('#pTalk').onclick = async () => { const txt = $('#pI').value.trim(); if (!txt) return $('#pI').focus(); say('ULTRON réfléchit…'); AU.statut = 'en ligne';
+  try { const j = await (await fetch(`${N8N}/webhook/qdgz-ultron?` + new URLSearchParams({ message: txt }))).json(); say('🏴‍☠️ ' + j.reponse); $('#pI').value = '';
+    if (j.agent && j.agent !== 'AUCUN') { log(`🧠 ULTRON confie « ${j.sujet} » à ${j.agent}`); const a = AG.find(q => q.d.code === j.agent); if (a) a.statut = 'en ligne'; setTimeout(poll, 3000) } else log('🧠 ULTRON a répondu') }
+  catch (e) { try { const j = await (await fetch(`${OLL}/api/chat`, { method: 'POST', body: JSON.stringify({ model: 'qwen2.5:3b', stream: false, messages: [{ role: 'system', content: 'Tu es ULTRON, capitaine robot du galion volant QDGZ. Réponds en français, ton pirate, 1 à 3 phrases.' }, { role: 'user', content: txt }] }) })).json(); say('🏴‍☠️ ' + j.message.content + '  (N8N hors ligne : aucune mission créée)') }
+    catch (e2) { say('⚠ Ni N8N ni Ollama ne répondent : lance LANCER-TOUT.bat sur ton PC') } }
+  setTimeout(poll, 8000) };
+const HOME = { pos: new V(10, 53, 126), tg: new V(-1, 29, 0) };
+cam.position.copy(HOME.pos); ctl.target.copy(HOME.tg);
+$('#bCap').onclick = () => select(AU);
+const VIEWS = [
+  ['🏴‍☠️ Coupe', () => HOME], ['⚓ Pont', () => L2W([26, 22.2, 7], [-14, 22.5, -3])], ['🎩 Passerelle', () => L2W([-40, 29, 8], [-10, 24, 0])],
+  ['🔭 Nid de pie', () => L2W([2.5, 47.5, 2.5], [22, 38, 6])], ['🧭 Proue', () => L2W([62, 20, -26], [20, 15, 0])], ['🔥 Poupe', () => L2W([-66, 22, -26], [-24, 14, 0])],
+  ['⬇ Sous la coque', () => L2W([12, -20, 34], [0, 6, 0])], ['🕯 Cale', () => L2W([-6, 4.6, 13], [-16, 3, -2])], ['⛵ Escorte', () => ({ pos: new V(300, 185, 320), tg: new V(40, 55, -75) })],
+  ['👣 Suivre un pirate', null], ['🐲 Dragon', null], ['🌗 Ambiance', null], ['🎬 Cinéma', null]];
+function L2W(p, t) { return { pos: W(new V(...p)), tg: W(new V(...t)) } }
+let follow = null, cine = false, cineI = 0, cineT = 0, fi = -1;
+const vb = $('#views'); VIEWS.forEach(([n, f], i) => { const b = document.createElement('button'); b.textContent = n; b.onclick = () => goView(i); vb.appendChild(b) });
+function mark(i) { [...vb.children].forEach((b, k) => b.classList.toggle('on', k === i)) }
+let dI = -1; function goView(i) { const [n, f] = VIEWS[i]; if (n.includes('Ambiance')) return setAmb(ambI + 1); mark(i); follow = null; dfollow = null; if (n.includes('Dragon')) { dI++; return goDragon(dI) } if (n.includes('Cinéma')) { cine = !cine; if (!cine) mark(-1); cineT = 0; return } cine = false;
+  if (n.includes('Suivre')) { fi = (fi + 1) % AG.length; follow = AG[fi]; log(`👣 Caméra sur ${follow.d.code} (${follow.d.fonction})`); return } fly = f() }
+mark(0);
+const ORDER = [...ROOMS].sort((a, b) => a.lv - b.lv || a.cx - b.cx); let ni = -1;
+$('#bNext').onclick = () => { ni = (ni + 1) % ORDER.length; const R = ORDER[ni], a = AG.find(q => q.R === R); a ? select(a) : selectRoom(R) };
+const ray = new THREE.Raycaster(), mp = new THREE.Vector2(); let down = null;
+r.domElement.addEventListener('pointerdown', e => { down = [e.clientX, e.clientY]; if (cine || follow || dfollow) { cine = false; follow = null; dfollow = null; mark(-1) } });
+r.domElement.addEventListener('pointerup', e => { if (!down || Math.hypot(e.clientX - down[0], e.clientY - down[1]) > 6) return; mp.set(e.clientX / innerWidth * 2 - 1, -e.clientY / innerHeight * 2 + 1); ray.setFromCamera(mp, cam);
+  const h = ray.intersectObjects(pick, false)[0]; if (!h) return; const u = h.object.userData; if (u.agent) select(u.agent); else if (u.room) { const a = AG.find(q => q.R === u.room); a ? select(a) : selectRoom(u.room) } });
+addEventListener('keydown', e => { if (e.target.tagName === 'TEXTAREA') return; if (e.key === 'Escape') $('#x').click(); if (e.key === 'n') $('#bNext').click(); if (/^[1-9]$/.test(e.key)) goView(+e.key - 1); if (e.key === 'd') goView(VIEWS.findIndex(v => v[0].includes('Dragon'))); if (e.key === 'm') setAmb(ambI + 1); if (e.key === 'c') $('#bCap').click(); if (e.key === 'v') goView(0) });
+
+/* =====================================================================
+   8. RENDU (bloom) ET ANIMATION
+   ===================================================================== */
+const comp = new EffectComposer(r, new THREE.WebGLRenderTarget(innerWidth, innerHeight, { samples: MOB ? 0 : 4, type: THREE.HalfFloatType })); comp.setPixelRatio(r.getPixelRatio()); comp.setSize(innerWidth, innerHeight); comp.addPass(new RenderPass(scene, cam));
+const bloom = new UnrealBloomPass(new THREE.Vector2(innerWidth, innerHeight), .5, .45, .85); comp.addPass(bloom);
+comp.addPass(new ShaderPass({ uniforms: { tDiffuse: { value: null } }, vertexShader: 'varying vec2 vUv;void main(){vUv=uv;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}',
+  fragmentShader: 'uniform sampler2D tDiffuse;varying vec2 vUv;void main(){vec4 c=texture2D(tDiffuse,vUv);float l=dot(c.rgb,vec3(.299,.587,.114));c.rgb=mix(vec3(l),c.rgb,1.12);c.rgb*=vec3(1.03,1.,.96);float d=distance(vUv,vec2(.5));c.rgb*=mix(1.,.62,smoothstep(.4,.9,d));gl_FragColor=c;}' }));
+comp.addPass(new OutputPass());
+function crewStep(c, dt, t) { const p = c.g.position; let walk = false;
+  if (c.tg) { const dx = c.tg.x - p.x, dz = c.tg.z - p.z, L = Math.hypot(dx, dz); if (L < .05) { c.tg = null; c.t = rand(2, 5); c.task = ['mop', 'haul', 'wave', 'idle', 'carry'][Math.floor(rand(0, 5))] } else { const st = Math.min(L, 1.3 * dt); p.x += dx / L * st; p.z += dz / L * st; c.g.rotation.y = Math.atan2(dx, dz); walk = true } }
+  else { c.t -= dt; if (c.t <= 0) { const x = rand(c.xs[0], c.xs[1]); c.tg = new V(x, 0, c.zf(x)); if (c.task !== 'carry') c.task = 'walk' } }
+  const k = t * 10 + c.ph; c.mop.visible = c.task === 'mop'; c.barrel.visible = c.task === 'carry'; c.b.rotation.set(0, 0, 0); c.b.position.y = 0; c.lL.rotation.x = c.lR.rotation.x = 0;
+  if (walk) { c.lL.rotation.x = Math.sin(k) * .7; c.lR.rotation.x = -Math.sin(k) * .7; c.b.rotation.z = Math.sin(k) * .1 }
+  if (c.task === 'carry') { c.aL.rotation.x = c.aR.rotation.x = -2.9 }
+  else if (walk) { c.aL.rotation.x = -Math.sin(k) * .6; c.aR.rotation.x = Math.sin(k) * .6 }
+  else if (c.task === 'mop') { c.aR.rotation.x = -.9 + Math.sin(t * 5 + c.ph) * .5; c.aL.rotation.x = -.6; c.b.rotation.x = .2 }
+  else if (c.task === 'haul') { const h = Math.sin(t * 4 + c.ph); c.aL.rotation.x = c.aR.rotation.x = -2.2 + h * .5; c.b.rotation.x = -.15 + h * .1 }
+  else if (c.task === 'wave') { c.aR.rotation.x = -2.8 + Math.sin(t * 9) * .3; c.aL.rotation.x = 0; c.b.position.y = Math.abs(Math.sin(t * 6)) * .2 }
+  else c.aL.rotation.x = c.aR.rotation.x = Math.sin(t * 2 + c.ph) * .08 }
+function botMove(a, dt, t) { const p = a.bot.g.position, j = a.bot.j; let walk = false;
+  const A = a.R ? [a.R.x1 + 1.3, a.R.x2 - 1.3, a.R.zb + 3.2, a.R.zf - 3.9] : [-30.5, -20.5, -6, 6];
+  const want = a.statut === 'travail' || a.statut === 'en ligne' ? a.home : a.statut === 'attente' ? new V(a.home.x, p.y, Math.max(A[2], A[3])) : null;
+  if (want) a.tg = Math.hypot(want.x - p.x, want.z - p.z) > .1 ? want : null;
+  else if (!a.tg) { a.wait -= dt; if (a.wait <= 0) { a.tg = new V(rand(A[0], A[1]), p.y, rand(A[2], Math.max(A[2], A[3]))); a.wait = rand(2, 6) } }
+  if (a.tg) { const dx = a.tg.x - p.x, dz = a.tg.z - p.z, L = Math.hypot(dx, dz); if (L < .08) { a.tg = null; if (want) a.bot.g.rotation.y = a.face } else { const st = Math.min(L, 1.5 * dt); p.x += dx / L * st; p.z += dz / L * st; a.bot.g.rotation.y = Math.atan2(dx, dz); walk = true } }
+  else if (!want && a.wait > 1.5) a.bot.g.rotation.y += (a.face - a.bot.g.rotation.y) * .02;
+  a.walk = walk; const k = t * 7 + a.phase; j.lL.rotation.x = walk ? Math.sin(k) * .6 : 0; j.lR.rotation.x = walk ? -Math.sin(k) * .6 : 0; p.y = a.home.y + (walk ? Math.abs(Math.sin(k)) * .05 : 0) }
+function botStep(s, t) { const j = s.bot.j, st = s.statut; j.head.rotation.y = Math.sin(t * .6 + s.phase) * .35; if (j.core) j.core.material.emissiveIntensity = 2.5 + Math.sin(t * 3 + s.phase) * 1.2;
+  if (s.walk) { const k = t * 7 + s.phase; j.aL.rotation.x = -Math.sin(k) * .5; j.aR.rotation.x = Math.sin(k) * .5; if (j.cape) j.cape.rotation.x = .3 + Math.sin(k) * .1; return }
+  if (st === 'travail') { j.aL.rotation.x = j.aR.rotation.x = -1.3 + Math.sin(t * 6 + s.phase) * .15; if (s.wheel) s.wheel.rotation.z = Math.sin(t * .8) * .9 }
+  else if (st === 'attente') { j.aL.rotation.x = -2.9 + Math.sin(t * 8) * .25; j.aR.rotation.x = -.3 }
+  else if (st === 'en ligne') { j.aL.rotation.x = -.2; j.aR.rotation.x = -1.7 + Math.sin(t * 3) * .5; j.head.rotation.y = Math.sin(t * 1.5) * .7 }
+  else { j.aL.rotation.x = Math.sin(t * 1.2) * .06; j.aR.rotation.x = -.4 + Math.sin(t * 1.2 + 1) * .06; if (s.wheel) s.wheel.rotation.z = Math.sin(t * .3) * .3 }
+  if (j.ember) j.ember.material.emissiveIntensity = 3 + Math.sin(t * 5) * 1.5; if (j.cape) j.cape.rotation.x = .15 + Math.sin(t * 3) * .08 }
+const SPEED = 26, clock = new THREE.Clock(), tmp = new V();
+const TR = [], trM = () => new THREE.SpriteMaterial({ map: softT, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending });
+for (let i = 0; i < 360; i++) { const s = new THREE.Sprite(trM()); s.visible = false; scene.add(s); TR.push({ s, l: 0 }) } let trI = 0;
+const DN = 500, dustG = new THREE.BufferGeometry(), dp = new Float32Array(DN * 3); for (let i = 0; i < DN; i++) dp.set([rand(-120, 120), rand(-10, 110), rand(-60, 60)], i * 3);
+dustG.setAttribute('position', new THREE.BufferAttribute(dp, 3)); const dust = new THREE.Points(dustG, new THREE.PointsMaterial({ color: '#ffd89a', size: .35, map: softT, transparent: true, opacity: .8, blending: THREE.AdditiveBlending, depthWrite: false })); scene.add(dust);
+const BOOM = []; for (let i = 0; i < 40; i++) { const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: softT, color: '#ddd', transparent: true, depthWrite: false })); sp.visible = false; scene.add(sp); BOOM.push({ sp, l: 0 }) } let bI = 0, nextBoom = 4;
+function salve(s) { const side = Math.random() < .5 ? -1 : 1, p = s.root.localToWorld(new V(rand(-3, 4), 1.4, side * 3.2)), d = new V(0, 0, side).applyQuaternion(s.root.quaternion);
+  const f = BOOM[bI++ % BOOM.length]; f.sp.material.color.set('#ffcc66'); f.sp.material.blending = THREE.AdditiveBlending; f.sp.position.copy(p).addScaledVector(d, 3); f.sp.scale.setScalar(9); f.l = .35; f.flash = 1; f.v = new V(); f.sp.visible = true;
+  for (let i = 0; i < 6; i++) { const q = BOOM[bI++ % BOOM.length]; q.sp.material.color.set('#d8d2cc'); q.sp.material.blending = THREE.NormalBlending; q.sp.position.copy(p).addScaledVector(d, 3 + i * 1.5); q.sp.scale.setScalar(3); q.l = 2.5; q.flash = 0; q.v = d.clone().multiplyScalar(rand(2, 6)).add(new V(0, rand(.5, 2), 0)); q.sp.visible = true } }
+// étoiles (nuit) et lanternes célestes qui montent
+const stG = new THREE.BufferGeometry(), stP = []; for (let i = 0; i < 1800; i++) { const v = new V(rand(-1, 1), rand(.05, 1), rand(-1, 1)).normalize().multiplyScalar(2200); stP.push(v.x, v.y, v.z) }
+stG.setAttribute('position', new THREE.Float32BufferAttribute(stP, 3)); const stars = new THREE.Points(stG, new THREE.PointsMaterial({ color: '#fff', size: 2.2, sizeAttenuation: false, fog: false, transparent: true, opacity: .9 })); stars.visible = false; scene.add(stars);
+const moon = new THREE.Mesh(new THREE.SphereGeometry(60, 32, 16), new THREE.MeshBasicMaterial({ color: '#fff6e0', fog: false })); moon.position.set(-900, 700, -1400); moon.visible = false; scene.add(moon);
+const LANT = []; for (let i = 0; i < 70; i++) { const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: softT, color: '#ffb35a', transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, opacity: .55 })); sp.scale.setScalar(rand(2.5, 4.5)); sp.position.set(rand(-260, 260), rand(-60, 160), rand(-260, 60)); scene.add(sp); LANT.push({ sp, v: rand(1.5, 4), ph: rand(0, 6) }) }
+const AMB = [
+  { n: 'Coucher de soleil', top: '#13285a', mid: '#4f86c9', hz: '#f2b98a', low: '#8fa6c9', gc: [1, .72, .42], sun: ['#ffd6a0', 2.6], hemi: 1, fill: 1.6, cloud: ['#fff6ee', '#3a3550', .35], ex: 1, night: false, lan: .55 },
+  { n: 'Nuit étoilée', top: '#01030a', mid: '#071030', hz: '#1a2848', low: '#060b18', gc: [.35, .45, .8], sun: ['#9fb4ff', .55], hemi: .22, fill: .35, cloud: ['#5a6488', '#0a0e22', .4], ex: 1.25, night: true, lan: 1 },
+  { n: 'Plein jour', top: '#1f5fc4', mid: '#62a6ee', hz: '#d6ebff', low: '#a9c4e6', gc: [1, .95, .85], sun: ['#fff4e0', 3], hemi: 1.3, fill: 1.1, cloud: ['#ffffff', '#5a6a80', .3], ex: .95, night: false, lan: .25 },
+  { n: 'Aube pourpre', top: '#1a0f3a', mid: '#7a3a8a', hz: '#ff9a7a', low: '#6a4a8a', gc: [1, .5, .55], sun: ['#ffb0a0', 2.2], hemi: .8, fill: 1.2, cloud: ['#ffd6e6', '#4a2a5a', .4], ex: 1.05, night: false, lan: .7 }];
+let ambI = 0; function setAmb(i) { const A = AMB[ambI = i % AMB.length], U = sky.material.uniforms; U.top.value.set(A.top); U.mid.value.set(A.mid); HZ.set(A.hz); scene.fog.color.set(A.hz); wind.material.opacity = A.night ? .1 : .28; U.low.value.set(A.low); U.gc.value.setRGB(...A.gc);
+  sunL.color.set(A.sun[0]); sunL.intensity = A.sun[1]; hemi.intensity = A.hemi; fill.intensity = A.fill; cloudM.color.set(A.cloud[0]); cloudM.emissive.set(A.cloud[1]); cloudM.emissiveIntensity = A.cloud[2];
+  floorM.color.set(A.cloud[0]); floorM.emissive.set(A.cloud[1]); r.toneMappingExposure = A.ex; stars.visible = moon.visible = A.night; LANT.forEach(l => l.sp.material.opacity = A.lan); log(`🌗 Ambiance : ${A.n}`) }
+// ===== GARDE DRAGONS : dragons de fer noirs (création originale) montés par des pirates robots
+const scaleT = canvasTex(256, 256, (x) => { x.fillStyle = '#08080b'; x.fillRect(0, 0, 256, 256); for (let r0 = 0; r0 < 17; r0++) for (let c0 = 0; c0 < 17; c0++) { const cx = c0 * 16 + (r0 % 2) * 8, cy = r0 * 15; const g = x.createRadialGradient(cx, cy + 3, 1, cx, cy + 3, 10); g.addColorStop(0, '#34343e'); g.addColorStop(1, '#0a0a0e'); x.fillStyle = g; x.beginPath(); x.arc(cx, cy + 3, 8, 0, PI); x.fill() } });
+scaleT.wrapS = scaleT.wrapT = THREE.RepeatWrapping; scaleT.repeat.set(3, 3);
+const dragM = new THREE.MeshPhysicalMaterial({ map: scaleT, color: '#b4b4c4', roughness: .4, metalness: .35, clearcoat: .7, clearcoatRoughness: .3, envMap: ENV, envMapIntensity: .9 });
+const memM = new THREE.MeshStandardMaterial({ color: '#16121a', roughness: .55, side: THREE.DoubleSide, emissive: '#3a0508', emissiveIntensity: .35, transparent: true, opacity: .93 });
+const hornM = new THREE.MeshStandardMaterial({ color: '#e6dccb', roughness: .35, envMap: ENV, envMapIntensity: .5 });
+function memb(p, pts) { const c = pts.reduce((a, q) => [a[0] + q[0] / pts.length, a[1] + q[1] / pts.length], [0, 0]), P = []; for (let i = 0; i < pts.length; i++) { const a = pts[i], b = pts[(i + 1) % pts.length]; P.push(c[0], 0, c[1], a[0], 0, a[1], b[0], 0, b[1]) }
+  const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(P, 3)); g.computeVertexNormals(); const m = new THREE.Mesh(g, memM); m.castShadow = true; p.add(m); return m }
+function bone(p, x1, z1, x2, z2, r) { const L = Math.hypot(x2 - x1, z2 - z1), b = add(new THREE.CylinderGeometry(r * .6, r, L, 7), dragM, p, (x1 + x2) / 2, 0, (z1 + z2) / 2); b.rotation.order = 'YXZ'; b.rotation.set(PI / 2, Math.atan2(x2 - x1, z2 - z1), 0); return b }
+const DRAGONS = [];
+function dragon(col, nom, path) { const d = { root: new THREE.Group(), tail: [], neck: [], wings: [], path, ph: rand(0, 6), fireT: rand(4, 12) }; scene.add(d.root);
+  const body = new THREE.Group(); d.root.add(body); d.body = body;
+  const tor = add(new THREE.LatheGeometry([[0, -3.3], [.45, -3.1], [.75, -2.5], [.98, -1.5], [1.12, -.3], [1.2, .8], [1.1, 1.8], [.85, 2.5], [.5, 2.9], [0, 3]].map(([a, b]) => new THREE.Vector2(a, b)), 28), dragM, body); tor.rotation.x = PI / 2; tor.scale.set(1, .9, 1); add(new THREE.TorusGeometry(.95, .07, 8, 30, PI), goldM, body, 0, -.1, 2.1).rotation.z = PI;
+  for (let i = 0; i < 7; i++) add(new THREE.BoxGeometry(1.25 - Math.abs(i - 3) * .08, .12, .5), goldM, body, 0, -1.02, -1.8 + i * .6);
+  for (let i = 0; i < 9; i++) { const c = add(new THREE.ConeGeometry(.2, .75 - Math.abs(i - 4) * .06, 4), dragM, body, 0, 1.02, -2.1 + i * .5); c.rotation.x = -.45 }
+  let p = body; for (let i = 0; i < 5; i++) { const n = new THREE.Group(); n.position.set(0, i ? .26 : .45, i ? .72 : 2.3); p.add(n); add(new THREE.SphereGeometry(.6 - i * .06, 16, 12), dragM, n).scale.set(1, .95, 1.1); { const c = add(new THREE.CylinderGeometry(.54 - i * .06, .6 - i * .06, i ? .72 : 1.5, 16, 1, true), dragM, n, 0, i ? -.13 : -.22, i ? -.36 : -.75); c.rotation.x = PI / 2 - (i ? .34 : .29) } const sp = add(new THREE.ConeGeometry(.13, .45, 4), dragM, n, 0, .55 - i * .04, 0); sp.rotation.x = -.5; d.neck.push(n); p = n }
+  const hd = new THREE.Group(); hd.position.set(0, .15, .8); p.add(hd); d.head = hd;
+  add(new THREE.SphereGeometry(.55, 20, 14), dragM, hd, 0, 0, .1).scale.set(.95, .72, 1.15); { const sn = add(new THREE.CylinderGeometry(.2, .38, 1.4, 10), dragM, hd, 0, -.04, 1.05); sn.rotation.x = PI / 2; sn.scale.set(1, 1, .62) }
+  const jaw = new THREE.Group(); jaw.position.set(0, -.24, .45); hd.add(jaw); add(new RoundedBoxGeometry(.62, .17, 1.3, 2, .06), dragM, jaw, 0, -.05, .5); d.jaw = jaw;
+  for (let k = 0; k < 5; k++) [-1, 1].forEach(sd => add(new THREE.ConeGeometry(.04, .17, 4), hornM, hd, sd * .27, -.3, .75 + k * .2).rotation.x = PI);
+  [-1, 1].forEach(sd => { const hn = add(new THREE.ConeGeometry(.12, 1.7, 8), hornM, hd, sd * .3, .32, -.55); hn.rotation.set(-1.95, 0, sd * .28); const h2 = add(new THREE.ConeGeometry(.07, .8, 8), hornM, hd, sd * .48, .05, -.3); h2.rotation.set(-1.7, 0, sd * .7);
+    add(new THREE.SphereGeometry(.085, 10, 8), glow('#ff3a1a', 7), hd, sd * .41, .12, .55); const br = add(new THREE.BoxGeometry(.32, .07, .14), dragM, hd, sd * .4, .25, .52); br.rotation.z = -sd * .35;
+    add(new THREE.SphereGeometry(.04, 6, 5), glow('#ff6a1a', 3), hd, sd * .16, .02, 1.62) });
+  add(new THREE.BoxGeometry(.46, .07, .95), goldM, hd, 0, .33, .1);
+  const fire = new THREE.Mesh(new THREE.ConeGeometry(.9, 10, 18, 1, true), new THREE.MeshBasicMaterial({ color: '#ff8a2a', transparent: true, opacity: 0, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide, fog: false }));
+  fire.geometry.translate(0, -5, 0); fire.rotation.x = -PI / 2; fire.position.set(0, -.15, 1.7); hd.add(fire); d.fire = fire;
+  const core = new THREE.Mesh(new THREE.ConeGeometry(.4, 6, 12, 1, true), new THREE.MeshBasicMaterial({ color: '#fff2b0', transparent: true, opacity: 0, blending: THREE.AdditiveBlending, depthWrite: false, fog: false })); core.geometry.translate(0, -3, 0); core.rotation.x = -PI / 2; core.position.copy(fire.position); hd.add(core); d.core = core;
+  [-1, 1].forEach(sd => { const sh = new THREE.Group(); sh.position.set(sd * .85, .7, -.3); body.add(sh); const inner = new THREE.Group(); sh.add(inner); const outer = new THREE.Group(); outer.position.set(sd * 4, 0, 0); inner.add(outer);
+    bone(inner, 0, 0, sd * 4, 0, .16); memb(inner, [[0, .5], [sd * 4, .2], [sd * 4, -2.3], [sd * 2.6, -1.7], [sd * 1.2, -2.6], [0, -2.9]]);
+    bone(outer, 0, 0, sd * 4.8, .5, .11); bone(outer, 0, 0, sd * 4.2, -2, .09); bone(outer, 0, 0, sd * 2.7, -3.1, .08); add(new THREE.ConeGeometry(.08, .4, 5), hornM, outer, sd * 4.9, 0, .55).rotation.z = -sd * PI / 2;
+    memb(outer, [[0, .2], [sd * 4.8, .5], [sd * 4.2, -2], [sd * 3.3, -2.2], [sd * 2.7, -3.1], [sd * 1.4, -2.6], [0, -2.3]]); d.wings.push({ inner, outer, sd }) });
+  p = body; for (let i = 0; i < 10; i++) { const tg = new THREE.Group(); tg.position.set(0, i ? 0 : -.1, i ? -.78 : -2.5); p.add(tg); { const r1 = .5 * (1 - i * .085) + .07, r2 = .5 * (1 - (i + 1) * .085) + .07; add(new THREE.SphereGeometry(r1, 16, 12), dragM, tg).scale.set(1, .9, 1.05); const c = add(new THREE.CylinderGeometry(r2 * .95, r1 * .95, .8, 16, 1, true), dragM, tg, 0, 0, -.4); c.rotation.x = -PI / 2 } if (i % 2 === 0) add(new THREE.ConeGeometry(.11, .38, 4), dragM, tg, 0, .45 * (1 - i * .08), 0).rotation.x = -.5; d.tail.push(tg); p = tg }
+  const bl = new THREE.Shape(); bl.moveTo(0, 0); bl.lineTo(.7, -.5); bl.lineTo(0, -1.7); bl.lineTo(-.7, -.5); bl.lineTo(0, 0); const bld = add(new THREE.ExtrudeGeometry(bl, { depth: .06, bevelEnabled: false }), goldM, p, 0, 0, -.4); bld.rotation.x = PI / 2;
+  [[-1, 1.2], [1, 1.2], [-1, -1.3], [1, -1.3]].forEach(([sd, z]) => { const lg = add(new THREE.CylinderGeometry(.22, .15, 1.2, 8), dragM, body, sd * .75, -.95, z); lg.rotation.x = .95; for (let k = -1; k <= 1; k++) add(new THREE.ConeGeometry(.05, .3, 4), hornM, body, sd * .75 + k * .1, -1.35, z - .62).rotation.x = -1.2 });
+  add(new THREE.BoxGeometry(1.2, .32, 1.5), new THREE.MeshStandardMaterial({ color: '#4a1a10', roughness: .55 }), body, 0, 1.05, 1.4, true); add(new THREE.BoxGeometry(1.4, .08, 1.7), goldM, body, 0, .92, 1.4);
+  add(new THREE.TorusGeometry(1.16, .05, 6, 28), new THREE.MeshStandardMaterial({ color: '#2a1408' }), body, 0, 0, 1.4);
+  const rd = pirate(col, false); rd.g.position.set(0, 1.18, 1.25); rd.g.scale.setScalar(.95); body.add(rd.g); rd.j.lL.rotation.set(-1.15, 0, -.55); rd.j.lR.rotation.set(-1.15, 0, .55); rd.j.aR.rotation.x = -1.35; rd.j.aL.rotation.x = -.7;
+  add(new THREE.CylinderGeometry(.035, .05, 5.5, 8), darkWood, rd.j.aR, 0, -2.6, .05); add(new THREE.ConeGeometry(.09, .5, 8), goldM, rd.j.aR, 0, -5.55, .05).rotation.x = PI;
+  const pen = add(new THREE.PlaneGeometry(.9, .45), new THREE.MeshStandardMaterial({ map: flagT, side: THREE.DoubleSide }), rd.j.aR, .45, -4.8, .05); pen.rotation.y = PI / 2; d.pen = pen; d.rider = rd;
+  d.tag = tag(`<b>🐲 ${nom}</b><small>garde dragon</small>`, col, d.root, new V(0, 4.4, 0)); LBL[LBL.length - 1].far = 380; d.tag.onclick = () => goDragon(DRAGONS.indexOf(d)); d.nom = nom;
+  d.root.scale.setScalar(3); DRAGONS.push(d); return d }
+// les dragons patrouillent uniquement à l'arrière-plan, entre le galion et les navires d'escorte (jamais devant)
+dragon('#ff2a2a', 'Ombrécaille', { cx: -40, cz: -115, rx: 150, rz: 40, h: 72, w: .11 }); dragon('#d4a440', 'Cendrevent', { cx: 60, cz: -150, rx: 170, rz: 45, h: 48, w: -.09 });
+dragon('#2ec4b6', 'Noirefaille', { cx: 0, cz: -100, rx: 120, rz: 30, h: 110, w: .13 }); dragon('#b388ff', 'Brasenuit', { cx: 120, cz: -95, rx: 140, rz: 38, h: 66, w: -.075 });
+const dP = (d, t) => { const a = d.ph + d.path.w * t; return new V(d.path.cx + d.path.rx * Math.cos(a), d.path.h + 9 * Math.sin(2 * a + d.ph), d.path.cz + d.path.rz * Math.sin(a)) };
+let dfollow = null; function goDragon(i) { dfollow = DRAGONS[i % DRAGONS.length]; follow = null; cine = false; fly = null; log(`🐲 Vol avec ${dfollow.nom}, garde dragon`) }
+const SHIPS = [G, ...ESC], ECOL = ['#ffd2a0', '#ffd27a', '#ff8a7a', '#7af0e0'];
+try { $('#loadLogo').style.backgroundImage = `url(${flagT.image.toDataURL()})` } catch (e) { }
+let frames = 0, fpsT = 0, fpsN = 0, qualDone = LEGER;
+const FLR = [[0, 90, '#ffe9b0', .55], [.35, 26, '#ffd27a', .35], [.6, 14, '#ff9a6a', .3], [.85, 40, '#9ad0ff', .22], [1.15, 18, '#ffb0e0', .25], [-.25, 30, '#fff', .18]].map(([k, sz, c, o]) => { const i = document.createElement('i'); i.style.cssText = `width:${sz}px;height:${sz}px;background:radial-gradient(circle,${c},transparent 65%);opacity:${o}`; $('#flare').appendChild(i); return { i, k } });
+const sunP = new V(); function flare() { sunP.copy(SUN).multiplyScalar(1500).add(cam.position).project(cam); const beh = sunP.z > 1 || Math.abs(sunP.x) > 1.3 || Math.abs(sunP.y) > 1.3 || AMB[ambI].night; const sx = (sunP.x + 1) / 2 * innerWidth, sy = (1 - sunP.y) / 2 * innerHeight, cx = innerWidth / 2, cy = innerHeight / 2;
+  FLR.forEach(f => { f.i.style.display = beh ? 'none' : ''; if (!beh) f.i.style.transform = `translate(${Math.round(sx + (cx - sx) * f.k)}px,${Math.round(sy + (cy - sy) * f.k)}px) translate(-50%,-50%)` }) }
+r.setAnimationLoop(() => { const dt = Math.min(clock.getDelta(), .05), t = clock.elapsedTime;
+  if (++frames === 2) { $('#load').classList.add('off'); setTimeout(() => $('#load').remove(), 900) }
+  if (!qualDone && frames > 30) { fpsT += dt; fpsN++; if (fpsT > 4) { qualDone = true; const fps = fpsN / fpsT; if (fps < 26) { r.setPixelRatio(Math.min(devicePixelRatio, 1)); comp.setPixelRatio(1); bloom.strength = .3; r.shadowMap.enabled = false; sunL.castShadow = false; log(`🪶 Mode léger activé (${fps | 0} img/s) — réglable dans ⚙`) } } }
+  clouds.forEach(c => { c.position.x -= SPEED * dt * (c.userData.floor ? .55 : 1); if (c.position.x < -900) c.position.x += 1800 });
+  const wa = wind.geometry.attributes.position; for (let i = 0; i < WN * 2; i++) { let x = wa.getX(i) - SPEED * 3.2 * dt; if (x < -320) x += 640; wa.setX(i, x) } wa.needsUpdate = true;
+  birds.forEach(b => { b.position.x -= (SPEED * .4) * dt; if (b.position.x < -260) b.position.x = 260; const f = Math.sin(t * 9 + b.userData.ph) * .6; b.userData[-1].rotation.z = f; b.userData[1].rotation.z = -f });
+  SHIPS.forEach((s, n) => { const p = s.base, f = s.phase, big = s.big; s.root.position.set(p.x + Math.sin(t * .23 + f) * (big ? .8 : 5), p.y + Math.sin(t * .55 + f) * (big ? .7 : 1.8), p.z + Math.sin(t * .17 + f) * (big ? .5 : 3));
+    s.root.rotation.z = (big ? 0 : -.03) + Math.sin(t * .45 + f) * (big ? .008 : .05); s.root.rotation.x = Math.sin(t * .35 + f * 2) * (big ? .006 : .06);
+    s.sails.forEach((m, i) => m.scale.z = 1 + Math.sin(t * 2.2 + i + f) * .08);
+    s.wings.forEach((w, i) => w.g.rotation.z = Math.sin(t * 1.3 + f + i) * .1);
+    s.flames.forEach(fl => fl.scale.set(1, .85 + Math.random() * .35, 1));
+    if (s.hov) s.hov.material.opacity = .35 + Math.sin(t * 2 + f) * .12;
+    if (Math.random() < (big ? .9 : .55)) s.exhaust.forEach(e => { const q = TR[trI++ % TR.length]; tmp.copy(e); s.root.localToWorld(tmp); q.s.position.copy(tmp); q.s.material.color.set(ECOL[n]); q.l = 1; q.s.visible = true });
+    if (s.bot) botStep({ bot: s.bot, statut: 'travail', phase: f, wheel: s.wheel }, t); s.crew.forEach(c => crewStep(c, dt, t)) });
+  AG.forEach(a => { botMove(a, dt, t); botStep(a, t) });
+  DRAGONS.forEach((d, n) => { const p = dP(d, t), q = dP(d, t + .1); d.root.position.copy(p); d.root.lookAt(q); d.root.rotateZ(-Math.sign(d.path.w) * .38);
+    const f = t * 3.1 + d.ph; d.wings.forEach(w => { w.inner.rotation.z = w.sd * (Math.sin(f) * .38 + .14); w.outer.rotation.z = w.sd * (Math.sin(f - .7) * .32 + .04) }); d.body.position.y = -Math.sin(f) * .22;
+    d.neck.forEach((s, i) => { s.rotation.y = Math.sin(t * 1.3 + d.ph - i * .4) * .09; s.rotation.x = Math.sin(t * .9 + i) * .04 }); d.tail.forEach((s, i) => { s.rotation.y = Math.sin(t * 2 + d.ph - i * .5) * .17; s.rotation.x = Math.sin(t * 1.4 - i * .3) * .05 });
+    d.pen.rotation.x = Math.sin(t * 9 + n) * .25; d.fireT -= dt; const on = d.fireT < 1.6 && d.fireT > 0; if (d.fireT < 0) d.fireT = rand(7, 14);
+    d.jaw.rotation.x = on ? .55 : Math.max(0, Math.sin(t * .7 + n)) * .12; d.fire.material.opacity = on ? .55 + Math.random() * .3 : 0; d.core.material.opacity = on ? .7 : 0; d.fire.scale.set(1, on ? .8 + Math.random() * .4 : 1, 1) });
+  LANT.forEach(l => { l.sp.position.y += l.v * dt; l.sp.position.x -= SPEED * .25 * dt + Math.sin(t + l.ph) * .02; if (l.sp.position.y > 170) { l.sp.position.y = -60; l.sp.position.x = rand(-260, 260) } if (l.sp.position.x < -280) l.sp.position.x += 560 });
+  PARROTS.forEach(p => { p.hd.rotation.y = Math.sin(t * 2.3 + p.ph) * .7; p.hd.rotation.x = Math.max(0, Math.sin(t * 5 + p.ph)) * .4 });
+  SEAT.forEach(q => { q.m.lL.rotation.x = -1.4 + Math.sin(t * 3 + q.ph) * .3; q.m.lR.rotation.x = -1.4 - Math.sin(t * 3 + q.ph) * .3; q.m.aR.rotation.x = Math.sin(t * 2 + q.ph) > .7 ? -2.8 : -.3 });
+  BEAMS.forEach((b, i) => { b.piv.rotation.set(Math.sin(t * .3 + i * 2) * .25, 0, -1.25 + Math.sin(t * .4 + i) * .25) });
+  holo.rotation.z = t * .4; holoR.rotation.x = Math.sin(t) * .3; holo.material.opacity = .45 + Math.sin(t * 3) * .1;
+  { const a = dust.geometry.attributes.position; for (let i = 0; i < DN; i++) { let x = a.getX(i) - SPEED * .5 * dt; if (x < -120) x += 240; a.setX(i, x); a.setY(i, a.getY(i) + Math.sin(t + i) * .01) } a.needsUpdate = true }
+  if (t > nextBoom) { salve(ESC[Math.floor(rand(0, ESC.length))]); nextBoom = t + rand(5, 11) }
+  BOOM.forEach(q => { if (q.l <= 0) return; q.l -= dt; if (q.flash) { q.sp.material.opacity = q.l / .35 } else { q.sp.position.addScaledVector(q.v, dt); q.sp.position.x -= SPEED * .8 * dt; q.sp.scale.setScalar(3 + (2.5 - q.l) * 4); q.sp.material.opacity = Math.min(.6, q.l * .3) } if (q.l <= 0) q.sp.visible = false }); ANIM.forEach(f => f(t));
+  TR.forEach(q => { if (q.l <= 0) return; q.l -= dt * .7; q.s.position.x -= SPEED * 1.4 * dt; q.s.material.opacity = q.l * .5; q.s.scale.setScalar(2 + (1 - q.l) * 9); if (q.l <= 0) q.s.visible = false });
+  FLAGS.forEach((f, n) => { const a = f.geometry.attributes.position, b = f.userData.base, w = f.userData.w; for (let i = 0; i < a.count; i++) { const x = b[i * 3], u = x / w; a.setZ(i, Math.sin(x * 2.4 - t * 7 + n) * .28 * u) } a.needsUpdate = true });
+  if (cine) { cineT -= dt; if (cineT <= 0) { cineI = (cineI + 1) % 9; fly = VIEWS[cineI][1](); cineT = 7 } ctl.autoRotate = !fly; ctl.autoRotateSpeed = .6 } else ctl.autoRotate = false;
+  if (dfollow) { const p = dfollow.root.position; ctl.target.lerp(p, .12); cam.position.lerp(dfollow.root.localToWorld(new V(0, 5.5, -13)), .08) }
+  if (follow) { const p = follow.bot.g.getWorldPosition(tmp).clone(); ctl.target.lerp(p.clone().add(new V(0, 2.2 * GS, 0)), .1); cam.position.lerp(p.add(new V(3 * GS, 4 * GS, 9 * GS)), .05) }
+  if (fly) { cam.position.lerp(fly.pos, .06); ctl.target.lerp(fly.tg, .08); if (cam.position.distanceTo(fly.pos) < .3) fly = null }
+  ctl.update(); comp.render(); drawLabels(); flare() });
+addEventListener('resize', () => { cam.aspect = innerWidth / innerHeight; cam.updateProjectionMatrix(); r.setSize(innerWidth, innerHeight); comp.setSize(innerWidth, innerHeight) });
+log(`⚓ ${NOM_QG} : tout l'équipage est à bord. Clique sur une salle ou un pirate.`);
+if (location.protocol === 'https:' && HOTE === 'localhost' && !LS('qdgz.n8n')) log('🌐 Base en ligne : sur ton PC elle parle à N8N en local ; ailleurs, règle les adresses dans ⚙');
+if (MOB && innerHeight > innerWidth) log('📱 Tourne ton téléphone en paysage pour profiter du galion');
+</script>
+</body>
+</html>
