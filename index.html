@@ -615,7 +615,7 @@ function fillPanel() { const s = sel; if (!s) return;
   $('#pN8').href = N8N }
 const STC = { a_faire: '#8b5cf6', en_cours: '#22c55e', a_valider: '#ef4444', valide: '#64748b' }, STT = { a_faire: 'à faire', en_cours: 'en cours', a_valider: 'à valider', valide: 'validé' };
 function mRow(m) { const ob = 'obsidian://open?vault=ULTRON-Vault&file=' + encodeURIComponent('Missions/' + m.file.replace(/\.md$/, ''));
-  const lv = m.livrable ? `<a href="obsidian://open?vault=ULTRON-Vault&file=${encodeURIComponent(m.livrable.replace(/^\/+/, '').replace(/\.md$/, ''))}" title="Ouvrir le livrable">📦</a>` : '';
+  const lv = m.livrable ? `<a href="obsidian://open?vault=ULTRON-Vault&file=${encodeURIComponent(m.livrable.replace(/["'\[\]]/g, '').replace(/^\/+/, '').replace(/\.md$/, ''))}" title="Ouvrir le livrable">📦</a>` : '';
   const act = m.statut === 'a_valider' ? `<button onclick="window.__val('${m.file.replace(/'/g, "\\'")}','valide')" title="Valider">✅</button><button onclick="window.__val('${m.file.replace(/'/g, "\\'")}','a_faire',1)" title="Refaire avec un commentaire">🔁</button>` : '';
   return `<div class="m" style="--s:${STC[m.statut] || '#888'}"><span title="${m.file}"><b>${STT[m.statut] || m.statut}</b> · ${m.sujet}${sel === AU ? ' <small>(' + m.agent + ')</small>' : ''}</span>${lv}${act}<a href="${ob}" title="Ouvrir la mission dans Obsidian">📓</a></div>` }
 window.__val = async (file, statut, ask) => { let note = ''; if (ask) { note = prompt('Que faut-il refaire ou corriger ?') || ''; if (!note) return }
